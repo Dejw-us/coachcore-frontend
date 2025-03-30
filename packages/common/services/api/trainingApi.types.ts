@@ -3,6 +3,7 @@ export type TrainingPlan = {
   createdBy: string;
   name: string;
   description: string;
+  weeks: number;
   goals: TrainingGoal[];
 };
 
