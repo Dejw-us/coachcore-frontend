@@ -1,0 +1,12 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "author": "Dejw-us",
+  "license": "MIT",
+  "dependencies": {
+    "@tanstack/react-query": "^5.70.0",
+    "axios": "^1.8.4"
+  },
+  "private": true
+}
