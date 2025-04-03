@@ -17,6 +17,7 @@ export const setsKey = (planId: string, exerciseId: string) => [
   exerciseId,
 ];
 export const unitDisplayKey = (unitId: string) => ["unitDisplay", unitId];
+export const publicUserKey = (username: string) => ["publicUser", username];
 
 export function filterAndAddQueryData<T>(
   client: QueryClient,

@@ -1,6 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import { TrainingPlan } from "common";
+import { TrainingPlan, usePublicUser } from "common";
 import Mapper from "common/components/Mapper";
+import { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
 
@@ -9,6 +10,12 @@ export type TrainingPlanViewProps = {
 };
 
 export function TrainingPlanView({ plan }: TrainingPlanViewProps) {
+  const { data: planOwner, error } = usePublicUser(plan.createdBy);
+
+  useEffect(() => {
+    console.log("owner:" + planOwner);
+  }, [planOwner]);
+
   return (
     <View className="flex flex-col rounded-lg p-10 ju bg-white">
       <View className="flex flex-row">
@@ -57,12 +64,15 @@ export function TrainingPlanView({ plan }: TrainingPlanViewProps) {
             className="h-14 w-14"
             source={require("../../assets/images/icon.png")} // TODO fetch user icon
           />
-          <Text className="ml-2.5 flex-1 self-center">Username</Text> // TODO
-          add username
+          <Text className="ml-2.5 flex-1 self-center">
+            {planOwner?.username}
+          </Text>{" "}
+          // TODO add username
           <Text className="self-center">Follow</Text> // TODO impl follow button
         </View>
         <View className="flex flex-col">
-          <Text>User description</Text> // TODO add user description
+          <Text>{planOwner?.description || "No description"}</Text>
+          {error && <Text>{error.message}</Text>}
         </View>
       </View>
     </View>
