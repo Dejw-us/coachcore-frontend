@@ -1,3 +1,4 @@
+import { LoginPanel } from "@/components/ui/LoginPanel";
 import { usePlans } from "common";
 import Mapper from "common/components/Mapper";
 import { Text, View } from "react-native";
@@ -12,6 +13,7 @@ export default function HomeScreen() {
   }
   return (
     <SafeAreaView className="bg-slate-100">
+      <LoginPanel />
       <View className="flex flex-col items-center">
         <Mapper
           value={plans}

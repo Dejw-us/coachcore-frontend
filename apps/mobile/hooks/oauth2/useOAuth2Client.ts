@@ -1,5 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosRequestConfig } from "axios";
-import { gatewayClient } from "common";
+import { gatewayClient, REFRESH_TOKEN } from "common";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { useEffect } from "react";
 
@@ -73,6 +74,7 @@ export function useOAuth2Client(): OAuth2ClientState {
       const response = await axios.post(client.tokenUrl, body, config);
       const tokens: OAuth2TokenResponseBody = response.data;
       console.log("tokens: " + JSON.stringify(tokens));
+      AsyncStorage.setItem(REFRESH_TOKEN, tokens.refresh_token);
       gatewayClient.defaults.headers.common["Authorization"] =
         `Bearer ${tokens.access_token}`;
     };
