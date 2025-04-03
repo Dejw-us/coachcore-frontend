@@ -25,6 +25,15 @@ export type OAuth2ClientState = {
   fetchToken: () => void;
 };
 
+export type OAuth2TokenResponseBody = {
+  access_token: string;
+  refresh_token: string;
+  scope: string;
+  id_token: string;
+  token_type: string;
+  expires_in: number;
+};
+
 export function useOAuth2Client(): OAuth2ClientState {
   const client: OAuth2Client = {
     clientId: process.env.EXPO_PUBLIC_CLIENT_ID!,
@@ -75,7 +84,8 @@ export function useOAuth2Client(): OAuth2ClientState {
 
       const response = await axios.post(client.tokenUrl, body, config);
       console.log("response");
-      console.log(JSON.stringify(response));
+      const tokens: OAuth2TokenResponseBody = response.data;
+      console.log("response body: " + JSON.stringify(tokens));
     };
     fetchToken();
   }, [result]);
