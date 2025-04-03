@@ -12,17 +12,17 @@ export function deletePlan(planId: string): Promise<DeletedObject> {
 
 export function getPlans(): Promise<TrainingPlan[]> {
   console.log("getting plans");
-  return request(client.get("/v1/training-plans"));
+  return request(client.get("/v1/public/training-plans"));
 }
 
 export function getUserPlans(): Promise<TrainingPlan[]> {
-  return request(client.get("/training-plans/me"));
+  return request(client.get("v1/training-plans/me"));
 }
 
 export function getPlan(id: string): Promise<TrainingPlan> {
-  return request(client.get(`/training-plans/${id}`));
+  return request(client.get(`v1/public/training-plans/${id}`));
 }
 
 export function postPlan(plan: CreateTrainingPlan): Promise<TrainingPlan> {
-  return request(client.post("/training-plans", plan));
+  return request(client.post("v1/training-plans", plan));
 }
