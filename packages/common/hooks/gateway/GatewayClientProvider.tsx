@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import React, { ReactNode } from "react";
 import { GatewayClientContext } from "./GatewayClientContext";
 
@@ -8,13 +8,54 @@ export type GatewayClient = {
 
 export type GatewayClientProviderProps = {
   children: ReactNode;
+  getRefreshToken: () => Promise<string | null>;
+  saveRefreshToken: (token: string) => void;
+  tokenUrl: string;
+  clientId: string;
+  clientSecret: string;
 };
 
 export function GatewayClientProvider({
   children,
+  getRefreshToken,
+  saveRefreshToken,
+  tokenUrl,
+  clientId,
+  clientSecret,
 }: GatewayClientProviderProps) {
   const createInstance = () => {
-    return axios.create();
+    const instance = axios.create();
+
+    instance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (!error.response) {
+          return Promise.reject(error);
+        }
+        const status = error.response.status;
+        if (status === 401 || status === 403) {
+          const body = {
+            grant_type: "refresh_token",
+            refresh_token: await getRefreshToken(),
+          };
+          const config: AxiosRequestConfig = {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+            },
+          };
+          const response = await axios.post(tokenUrl, body, config);
+          const data = response.data;
+          instance.defaults.headers.common["Authorization"] = data.access_token;
+          saveRefreshToken(data.refresh_token);
+          if (response.status === 200) {
+            axios(error.config);
+          }
+        }
+      }
+    );
+
+    return instance;
   };
   return (
     <GatewayClientContext.Provider value={{ instance: createInstance() }}>
