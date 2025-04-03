@@ -1,5 +1,5 @@
 import { request } from "../../utils";
-import { client } from "./gatewayClient";
+import { gatewayClient } from "./gatewayClient";
 import {
   CreateTrainingUnit,
   TrainingUnit,
@@ -8,14 +8,16 @@ import {
 } from "./trainingApi.types.js";
 
 export function getUnit(planId: string, unitId: string): Promise<TrainingUnit> {
-  return request(client.get(`/training-plans/${planId}/units/${unitId}`));
+  return request(
+    gatewayClient.get(`/training-plans/${planId}/units/${unitId}`)
+  );
 }
 
 export function postUnit(
   planId: string,
   unit: CreateTrainingUnit
 ): Promise<TrainingUnit> {
-  return request(client.post(`/training-plans/${planId}/units`, unit));
+  return request(gatewayClient.post(`/training-plans/${planId}/units`, unit));
 }
 
 export function getUnitDisplay(
@@ -23,7 +25,7 @@ export function getUnitDisplay(
   unitId: string
 ): Promise<UnitDisplay> {
   return request(
-    client.get(`/training-plans/${planId}/units/${unitId}/display`)
+    gatewayClient.get(`/training-plans/${planId}/units/${unitId}/display`)
   );
 }
 
@@ -33,14 +35,19 @@ export function patchUnitDisplay(
   patch: UnitDisplayPatch
 ) {
   return request(
-    client.patch(`/training-plans/${planId}/units/${unitId}/display`, patch)
+    gatewayClient.patch(
+      `/training-plans/${planId}/units/${unitId}/display`,
+      patch
+    )
   );
 }
 
 export function deleteUnit(planId: string, unitId: string) {
-  return request(client.delete(`/training-plans/${planId}/units/${unitId}`));
+  return request(
+    gatewayClient.delete(`/training-plans/${planId}/units/${unitId}`)
+  );
 }
 
 export function getUnits(planId: string): Promise<TrainingUnit[]> {
-  return request(client.get(`/training-plans/${planId}/units`));
+  return request(gatewayClient.get(`/training-plans/${planId}/units`));
 }

@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { gatewayClient } from "common";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { useEffect } from "react";
 
@@ -12,17 +13,9 @@ export type OAuth2Client = {
   scope: string;
 };
 
-export type AuthorizeParams = {
-  response_type: "code";
-  client_id: string;
-  state: string;
-  scope: string;
-  redirect_uri: string;
-};
-
 export type OAuth2ClientState = {
   client: OAuth2Client;
-  fetchToken: () => void;
+  login: () => void;
 };
 
 export type OAuth2TokenResponseBody = {
@@ -45,7 +38,7 @@ export function useOAuth2Client(): OAuth2ClientState {
     scope: "openid",
   };
 
-  const [request, result, promptAsync] = useAuthRequest(
+  const [_response, result, promptAsync] = useAuthRequest(
     {
       clientId: client.clientId,
       redirectUri: client.redirectUri,
@@ -62,13 +55,9 @@ export function useOAuth2Client(): OAuth2ClientState {
     if (!result || result.type !== "success") {
       return;
     }
-    console.log("result: " + JSON.stringify(result));
-
     const fetchToken = async () => {
       const code = result.params.code;
-      console.log("Fetching for code: " + code);
       const secret = btoa(`${client.clientId}:${client.clientSecret}`);
-      console.log("Btoa: " + secret);
       const config: AxiosRequestConfig = {
         headers: {
           Authorization: `Basic ${secret}`,
@@ -80,26 +69,18 @@ export function useOAuth2Client(): OAuth2ClientState {
         code,
         redirect_uri: client.redirectUri,
       });
-      console.log("fetching token from " + client.tokenUrl);
 
       const response = await axios.post(client.tokenUrl, body, config);
-      console.log("response");
       const tokens: OAuth2TokenResponseBody = response.data;
-      console.log("response body: " + JSON.stringify(tokens));
+      console.log("tokens: " + JSON.stringify(tokens));
+      gatewayClient.defaults.headers.common["Authorization"] =
+        `Bearer ${tokens.access_token}`;
     };
     fetchToken();
   }, [result]);
 
-  const authorize = async () => {
-    await promptAsync();
-  };
-
   return {
     client,
-    fetchToken: async () => {
-      console.log("fetching code bla");
-      await authorize();
-      console.log("fetching token");
-    },
+    login: async () => await promptAsync(),
   };
 }

@@ -1,5 +1,5 @@
 import { request } from "../../utils/index";
-import { client } from "./gatewayClient";
+import { gatewayClient } from "./gatewayClient";
 import {
   DeletedObject,
   ExercisePatch,
@@ -13,7 +13,7 @@ export function postExercise(
 ): Promise<TrainingExercise> {
   const params = { catalogExerciseId };
   return request(
-    client.post(
+    gatewayClient.post(
       `/training-plans/${planId}/units/${unitId}/exercises`,
       {},
       { params }
@@ -31,9 +31,13 @@ export function patchExercise(
     catalogExerciseId,
   };
   return request(
-    client.patch(`/training-plans/${planId}/exercises/${exerciseId}`, patch, {
-      params,
-    })
+    gatewayClient.patch(
+      `/training-plans/${planId}/exercises/${exerciseId}`,
+      patch,
+      {
+        params,
+      }
+    )
   );
 }
 
@@ -42,7 +46,7 @@ export function deleteExercise(
   exerciseId: string
 ): Promise<DeletedObject> {
   return request(
-    client.delete(`/training-plans/${planId}/exercises/${exerciseId}`)
+    gatewayClient.delete(`/training-plans/${planId}/exercises/${exerciseId}`)
   );
 }
 
@@ -51,6 +55,6 @@ export function getExercises(
   unitId: string
 ): Promise<TrainingExercise[]> {
   return request(
-    client.get(`/training-plans/${planId}/units/${unitId}/exercises`)
+    gatewayClient.get(`/training-plans/${planId}/units/${unitId}/exercises`)
   );
 }

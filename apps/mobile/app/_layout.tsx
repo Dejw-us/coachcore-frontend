@@ -13,6 +13,7 @@ import "react-native-reanimated";
 import { useOAuth2Client } from "@/hooks/oauth2/useOAuth2Client";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { getUserPlans } from "common";
 import { Text } from "react-native";
 import "../global.css";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -23,7 +24,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-  const { client, fetchToken } = useOAuth2Client();
+  const { login } = useOAuth2Client();
 
   useEffect(() => {
     if (loaded) {
@@ -46,12 +47,20 @@ export default function RootLayout() {
       </ThemeProvider>
       <Text
         onPress={async () => {
-          console.log("press");
-          await fetchToken();
+          await login();
         }}
         className="text-4xl m-2 border-black border-1 border"
       >
         Login
+      </Text>
+      <Text
+        className="text-4xl m-2 border-black border-1 border"
+        onPress={async () => {
+          const response = await getUserPlans();
+          console.log("data: " + JSON.stringify(response));
+        }}
+      >
+        Test
       </Text>
     </QueryClientProvider>
   );

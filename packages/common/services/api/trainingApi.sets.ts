@@ -1,5 +1,5 @@
 import { request } from "../../utils/index";
-import { client } from "./gatewayClient";
+import { gatewayClient } from "./gatewayClient";
 import {
   DeletedObject,
   TrainingSet,
@@ -11,7 +11,7 @@ export function getSets(
   exerciseId: string
 ): Promise<TrainingSet[]> {
   return request(
-    client.get(`/training-plans/${planId}/exercises/${exerciseId}/sets`)
+    gatewayClient.get(`/training-plans/${planId}/exercises/${exerciseId}/sets`)
   );
 }
 
@@ -21,7 +21,7 @@ export function patchSet(
   update: TrainingSetPatch
 ): Promise<TrainingSet> {
   return request(
-    client.patch(`/training-plans/${planId}/sets/${setId}`, update)
+    gatewayClient.patch(`/training-plans/${planId}/sets/${setId}`, update)
   );
 }
 
@@ -29,7 +29,9 @@ export function deleteSet(
   planId: string,
   setId: string
 ): Promise<DeletedObject> {
-  return request(client.delete(`/training-plans/${planId}/sets/${setId}`));
+  return request(
+    gatewayClient.delete(`/training-plans/${planId}/sets/${setId}`)
+  );
 }
 
 export function postSet(
@@ -37,6 +39,6 @@ export function postSet(
   exerciseId: string
 ): Promise<TrainingSet> {
   return request(
-    client.post(`/training-plans/${planId}/exercises/${exerciseId}/sets`)
+    gatewayClient.post(`/training-plans/${planId}/exercises/${exerciseId}/sets`)
   );
 }

@@ -1,5 +1,5 @@
 import { request } from "../../utils/index";
-import { client } from "./gatewayClient";
+import { gatewayClient } from "./gatewayClient";
 import {
   CreateTrainingPlan,
   DeletedObject,
@@ -7,22 +7,22 @@ import {
 } from "./trainingApi.types";
 
 export function deletePlan(planId: string): Promise<DeletedObject> {
-  return request(client.delete(`/training-plans/${planId}`));
+  return request(gatewayClient.delete(`/training-plans/${planId}`));
 }
 
 export function getPlans(): Promise<TrainingPlan[]> {
   console.log("getting plans");
-  return request(client.get("/v1/public/training-plans"));
+  return request(gatewayClient.get("/v1/public/training-plans"));
 }
 
 export function getUserPlans(): Promise<TrainingPlan[]> {
-  return request(client.get("v1/training-plans/me"));
+  return request(gatewayClient.get("v1/training-plans/me"));
 }
 
 export function getPlan(id: string): Promise<TrainingPlan> {
-  return request(client.get(`v1/public/training-plans/${id}`));
+  return request(gatewayClient.get(`v1/public/training-plans/${id}`));
 }
 
 export function postPlan(plan: CreateTrainingPlan): Promise<TrainingPlan> {
-  return request(client.post("v1/training-plans", plan));
+  return request(gatewayClient.post("v1/training-plans", plan));
 }

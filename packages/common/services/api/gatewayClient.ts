@@ -1,10 +1,26 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
+import { createContext, useContext } from "react";
 import { AuthenticationError, DtoValidationError } from "../../utils/errors";
+
+export type GatewayClient = {
+  instance: AxiosInstance;
+};
+
+export const GatewayClientContext = createContext<GatewayClient | undefined>(
+  undefined
+);
+export const useGatewayClient = () => {
+  const context = useContext(GatewayClientContext);
+  if (!context) {
+    throw new Error("Gateway client must have an instance");
+  }
+  return context;
+};
 
 const GATEWAY = "http://10.0.2.2:8080"; // TODO add env vars
 const CLIENT_CREDENTIALS = btoa("coachcore-web-app:web-app-secret"); // <-- OAuth2 client_secret_basic
 
-export const client = axios.create({
+export const gatewayClient = axios.create({
   baseURL: GATEWAY,
   headers: {
     "Content-Type": "application/json",
@@ -27,7 +43,7 @@ async function refreshToken() {
   );
 }
 
-client.interceptors.response.use(
+gatewayClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (!error.response) {
