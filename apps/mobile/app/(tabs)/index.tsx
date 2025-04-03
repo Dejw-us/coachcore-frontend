@@ -2,7 +2,7 @@ import { usePlans } from "common";
 import Mapper from "common/components/Mapper";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TrainingPlanView } from "../ui/TrainingPlanView";
+import { TrainingPlanView } from "../../components/ui/TrainingPlanView";
 
 export default function HomeScreen() {
   const { data: plans, error, isLoading } = usePlans();

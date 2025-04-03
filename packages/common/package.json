@@ -6,7 +6,9 @@
   "license": "MIT",
   "dependencies": {
     "@tanstack/react-query": "^5.70.0",
-    "axios": "^1.8.4"
+    "axios": "^1.8.4",
+    "base-64": "^1.0.0",
+    "crypto": "^1.0.1"
   },
   "private": true
 }

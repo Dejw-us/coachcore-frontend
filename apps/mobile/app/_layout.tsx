@@ -10,8 +10,10 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
+import { useOAuth2Client } from "@/hooks/oauth2/useOAuth2Client";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Text } from "react-native";
 import "../global.css";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -21,6 +23,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+  const { client, fetchToken } = useOAuth2Client();
 
   useEffect(() => {
     if (loaded) {
@@ -41,6 +44,15 @@ export default function RootLayout() {
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
+      <Text
+        onPress={async () => {
+          console.log("press");
+          await fetchToken();
+        }}
+        className="text-4xl m-2 border-black border-1 border"
+      >
+        Login
+      </Text>
     </QueryClientProvider>
   );
 }
