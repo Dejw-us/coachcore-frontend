@@ -52,6 +52,7 @@ export default function RootLayout() {
         <Text
           className="text-4xl m-2"
           onPress={async () => {
+            console.log("test");
             const token = await AsyncStorage.getItem(REFRESH_TOKEN);
             const idToken = await AsyncStorage.getItem(ID_TOKEN);
             console.log("Refresh token log: " + token);

@@ -1,12 +1,15 @@
-import { User, useUserPlans } from "common";
+import { useGatewayClient, useUserPlans } from "common";
 import Mapper from "common/components/Mapper";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MyPlans() {
   const { data: plans, error, isLoading } = useUserPlans();
-  const user: User = { username: "test" };
+  const { user } = useGatewayClient();
 
+  if (user == null) {
+    return <Text>Login</Text>;
+  }
   if (error) {
     return <Text>{error.message}</Text>;
   }
