@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosRequestConfig } from "axios";
 import { ID_TOKEN, REFRESH_TOKEN, useAuth, useGatewayClient } from "common";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
@@ -34,7 +35,7 @@ export type OAuth2TokenResponseBody = {
 export function useOAuth2Client(): OAuth2ClientState {
   const { client: gatewayClient } = useGatewayClient();
   const { setIdToken } = useAuth();
-
+  const queryClient = useQueryClient();
   const client: OAuth2Client = {
     clientId: process.env.EXPO_PUBLIC_CLIENT_ID!,
     clientSecret: process.env.EXPO_PUBLIC_CLIENT_SECRET!,
@@ -86,19 +87,23 @@ export function useOAuth2Client(): OAuth2ClientState {
       await AsyncStorage.setItem(REFRESH_TOKEN, tokens.refresh_token);
       await AsyncStorage.setItem(ID_TOKEN, tokens.id_token);
       setIdToken(tokens.id_token);
+      queryClient.clear();
     };
     fetchToken();
   }, [result]);
 
   return {
     client,
-    login: async () => await promptAsync(),
+    login: async () => {
+      await promptAsync();
+    },
     logout: async () => {
       console.log("Openning logout url: " + client.logoutUrl);
+      await openBrowserAsync(client.logoutUrl);
       await AsyncStorage.removeItem(REFRESH_TOKEN);
       await AsyncStorage.removeItem(ID_TOKEN);
+      queryClient.clear();
       setIdToken(null);
-      await openBrowserAsync(client.logoutUrl);
     },
   };
 }

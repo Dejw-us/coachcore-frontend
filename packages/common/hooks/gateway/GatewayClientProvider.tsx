@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import React, { ReactNode } from "react";
-import { useAuth } from "../auth";
 import { GatewayClientContext } from "./GatewayClientContext";
 
 export type GatewayClient = {
@@ -26,7 +25,6 @@ export function GatewayClientProvider({
   clientId,
   clientSecret,
 }: GatewayClientProviderProps) {
-  const { setIdToken } = useAuth();
   const createInstance = () => {
     const instance = axios.create({
       baseURL: gatewayUrl,
@@ -59,7 +57,6 @@ export function GatewayClientProvider({
           instance.defaults.headers.common["Authorization"] =
             `Bearer ${data.access_token}`;
           saveRefreshToken(data.refresh_token);
-          setIdToken(data.id_token);
           if (response.status === 200) {
             axios(error.config);
           }
