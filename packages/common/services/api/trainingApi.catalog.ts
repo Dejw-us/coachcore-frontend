@@ -1,7 +1,9 @@
+import { GatewayClient } from "../../hooks";
 import { request } from "../../utils/index";
-import { gatewayClient } from "./gatewayClient";
 import { CatalogExercise } from "./trainingApi.types";
 
-export function getCatalog(): Promise<CatalogExercise[]> {
-  return request(gatewayClient.get("/catalog-exercises"));
+export function getCatalog({
+  client,
+}: GatewayClient): Promise<CatalogExercise[]> {
+  return request(client.get("/catalog-exercises"));
 }

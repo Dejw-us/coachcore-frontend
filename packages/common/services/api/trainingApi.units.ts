@@ -1,5 +1,5 @@
+import { GatewayClient } from "../../hooks";
 import { request } from "../../utils";
-import { gatewayClient } from "./gatewayClient";
 import {
   CreateTrainingUnit,
   TrainingUnit,
@@ -7,47 +7,54 @@ import {
   UnitDisplayPatch,
 } from "./trainingApi.types.js";
 
-export function getUnit(planId: string, unitId: string): Promise<TrainingUnit> {
-  return request(
-    gatewayClient.get(`/training-plans/${planId}/units/${unitId}`)
-  );
+export function getUnit(
+  { client }: GatewayClient,
+  planId: string,
+  unitId: string
+): Promise<TrainingUnit> {
+  return request(client.get(`/training-plans/${planId}/units/${unitId}`));
 }
 
 export function postUnit(
+  { client }: GatewayClient,
   planId: string,
   unit: CreateTrainingUnit
 ): Promise<TrainingUnit> {
-  return request(gatewayClient.post(`/training-plans/${planId}/units`, unit));
+  return request(client.post(`/training-plans/${planId}/units`, unit));
 }
 
 export function getUnitDisplay(
+  { client }: GatewayClient,
   planId: string,
   unitId: string
 ): Promise<UnitDisplay> {
   return request(
-    gatewayClient.get(`/training-plans/${planId}/units/${unitId}/display`)
+    client.get(`/training-plans/${planId}/units/${unitId}/display`)
   );
 }
 
 export function patchUnitDisplay(
+  { client }: GatewayClient,
   planId: string,
   unitId: string,
   patch: UnitDisplayPatch
 ) {
   return request(
-    gatewayClient.patch(
-      `/training-plans/${planId}/units/${unitId}/display`,
-      patch
-    )
+    client.patch(`/training-plans/${planId}/units/${unitId}/display`, patch)
   );
 }
 
-export function deleteUnit(planId: string, unitId: string) {
-  return request(
-    gatewayClient.delete(`/training-plans/${planId}/units/${unitId}`)
-  );
+export function deleteUnit(
+  { client }: GatewayClient,
+  planId: string,
+  unitId: string
+) {
+  return request(client.delete(`/training-plans/${planId}/units/${unitId}`));
 }
 
-export function getUnits(planId: string): Promise<TrainingUnit[]> {
-  return request(gatewayClient.get(`/training-plans/${planId}/units`));
+export function getUnits(
+  { client }: GatewayClient,
+  planId: string
+): Promise<TrainingUnit[]> {
+  return request(client.get(`/training-plans/${planId}/units`));
 }

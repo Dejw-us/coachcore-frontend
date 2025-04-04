@@ -1,5 +1,5 @@
+import { GatewayClient } from "../../hooks";
 import { request } from "../../utils/index";
-import { gatewayClient } from "./gatewayClient";
 import {
   DeletedObject,
   ExercisePatch,
@@ -7,13 +7,14 @@ import {
 } from "./trainingApi.types";
 
 export function postExercise(
+  { client }: GatewayClient,
   catalogExerciseId: string,
   planId: string,
   unitId: string
 ): Promise<TrainingExercise> {
   const params = { catalogExerciseId };
   return request(
-    gatewayClient.post(
+    client.post(
       `/training-plans/${planId}/units/${unitId}/exercises`,
       {},
       { params }
@@ -22,6 +23,7 @@ export function postExercise(
 }
 
 export function patchExercise(
+  { client }: GatewayClient,
   planId: string,
   exerciseId: string,
   patch: ExercisePatch,
@@ -31,30 +33,28 @@ export function patchExercise(
     catalogExerciseId,
   };
   return request(
-    gatewayClient.patch(
-      `/training-plans/${planId}/exercises/${exerciseId}`,
-      patch,
-      {
-        params,
-      }
-    )
+    client.patch(`/training-plans/${planId}/exercises/${exerciseId}`, patch, {
+      params,
+    })
   );
 }
 
 export function deleteExercise(
+  { client }: GatewayClient,
   planId: string,
   exerciseId: string
 ): Promise<DeletedObject> {
   return request(
-    gatewayClient.delete(`/training-plans/${planId}/exercises/${exerciseId}`)
+    client.delete(`/training-plans/${planId}/exercises/${exerciseId}`)
   );
 }
 
 export function getExercises(
+  { client }: GatewayClient,
   planId: string,
   unitId: string
 ): Promise<TrainingExercise[]> {
   return request(
-    gatewayClient.get(`/training-plans/${planId}/units/${unitId}/exercises`)
+    client.get(`/training-plans/${planId}/units/${unitId}/exercises`)
   );
 }

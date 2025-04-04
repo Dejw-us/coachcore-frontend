@@ -1,3 +1,4 @@
+export * from "./auth";
 export * from "./catalog/index";
 export * from "./exercise/index";
 export * from "./gateway";

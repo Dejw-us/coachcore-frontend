@@ -1,9 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import React, { ReactNode } from "react";
+import { useAuth } from "../auth";
 import { GatewayClientContext } from "./GatewayClientContext";
 
 export type GatewayClient = {
-  instance: AxiosInstance;
+  client: AxiosInstance;
 };
 
 export type GatewayClientProviderProps = {
@@ -11,6 +12,7 @@ export type GatewayClientProviderProps = {
   getRefreshToken: () => Promise<string | null>;
   saveRefreshToken: (token: string) => void;
   tokenUrl: string;
+  gatewayUrl: string;
   clientId: string;
   clientSecret: string;
 };
@@ -20,11 +22,19 @@ export function GatewayClientProvider({
   getRefreshToken,
   saveRefreshToken,
   tokenUrl,
+  gatewayUrl,
   clientId,
   clientSecret,
 }: GatewayClientProviderProps) {
+  const { setIdToken } = useAuth();
   const createInstance = () => {
-    const instance = axios.create();
+    const instance = axios.create({
+      baseURL: gatewayUrl,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
 
     instance.interceptors.response.use(
       (response) => response,
@@ -46,8 +56,10 @@ export function GatewayClientProvider({
           };
           const response = await axios.post(tokenUrl, body, config);
           const data = response.data;
-          instance.defaults.headers.common["Authorization"] = data.access_token;
+          instance.defaults.headers.common["Authorization"] =
+            `Bearer ${data.access_token}`;
           saveRefreshToken(data.refresh_token);
+          setIdToken(data.id_token);
           if (response.status === 200) {
             axios(error.config);
           }
@@ -58,7 +70,7 @@ export function GatewayClientProvider({
     return instance;
   };
   return (
-    <GatewayClientContext.Provider value={{ instance: createInstance() }}>
+    <GatewayClientContext.Provider value={{ client: createInstance() }}>
       {children}
     </GatewayClientContext.Provider>
   );

@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosRequestConfig } from "axios";
-import { gatewayClient, REFRESH_TOKEN } from "common";
+import { ID_TOKEN, REFRESH_TOKEN, useAuth, useGatewayClient } from "common";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
+import { openBrowserAsync } from "expo-web-browser";
 import { useEffect } from "react";
 
 export type OAuth2Client = {
@@ -9,6 +10,7 @@ export type OAuth2Client = {
   clientSecret: string;
   authUrl: string;
   tokenUrl: string;
+  logoutUrl: string;
   grantType: "authorization_code";
   redirectUri: string;
   scope: string;
@@ -17,6 +19,7 @@ export type OAuth2Client = {
 export type OAuth2ClientState = {
   client: OAuth2Client;
   login: () => void;
+  logout: () => void;
 };
 
 export type OAuth2TokenResponseBody = {
@@ -29,11 +32,15 @@ export type OAuth2TokenResponseBody = {
 };
 
 export function useOAuth2Client(): OAuth2ClientState {
+  const { client: gatewayClient } = useGatewayClient();
+  const { setIdToken } = useAuth();
+
   const client: OAuth2Client = {
     clientId: process.env.EXPO_PUBLIC_CLIENT_ID!,
     clientSecret: process.env.EXPO_PUBLIC_CLIENT_SECRET!,
     authUrl: process.env.EXPO_PUBLIC_AUTH_URL!,
     tokenUrl: process.env.EXPO_PUBLIC_TOKEN_URL!,
+    logoutUrl: process.env.EXPO_PUBLIC_LOGOUT_URL!,
     grantType: "authorization_code",
     redirectUri: makeRedirectUri({ scheme: "coachcore" }),
     scope: "openid",
@@ -74,9 +81,11 @@ export function useOAuth2Client(): OAuth2ClientState {
       const response = await axios.post(client.tokenUrl, body, config);
       const tokens: OAuth2TokenResponseBody = response.data;
       console.log("tokens: " + JSON.stringify(tokens));
-      AsyncStorage.setItem(REFRESH_TOKEN, tokens.refresh_token);
       gatewayClient.defaults.headers.common["Authorization"] =
         `Bearer ${tokens.access_token}`;
+      await AsyncStorage.setItem(REFRESH_TOKEN, tokens.refresh_token);
+      await AsyncStorage.setItem(ID_TOKEN, tokens.id_token);
+      setIdToken(tokens.id_token);
     };
     fetchToken();
   }, [result]);
@@ -84,5 +93,12 @@ export function useOAuth2Client(): OAuth2ClientState {
   return {
     client,
     login: async () => await promptAsync(),
+    logout: async () => {
+      console.log("Openning logout url: " + client.logoutUrl);
+      await AsyncStorage.removeItem(REFRESH_TOKEN);
+      await AsyncStorage.removeItem(ID_TOKEN);
+      setIdToken(null);
+      await openBrowserAsync(client.logoutUrl);
+    },
   };
 }
