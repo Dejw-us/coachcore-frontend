@@ -1,12 +1,27 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import React, { ReactNode, useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { GatewayClientContext } from "./GatewayClientContext";
+
+export type User = {
+  username: string;
+};
 
 export type GatewayClient = {
   client: AxiosInstance;
   refreshToken: string | null;
+  setRefreshToken: Dispatch<SetStateAction<string | null>>;
   accessToken: string | null;
+  setAccessToken: Dispatch<SetStateAction<string | null>>;
   idToken: string | null;
+  setIdToken: Dispatch<SetStateAction<string | null>>;
+  user: User | null;
 };
 
 export type TokenStorage = {
@@ -33,6 +48,13 @@ export type GatewayClientProviderProps = {
   oauth2Client: OAuth2ClientCredentials;
 };
 
+export const GatewayClient = axios.create({
+  baseURL: process.env.EXPO_PUBLIC_GATEWAY_URL!,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 export function GatewayClientProvider({
   children,
   tokenStorage,
@@ -42,57 +64,55 @@ export function GatewayClientProvider({
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [idToken, setIdToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const client = axios.create({
-    baseURL: urls.gateway,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  client.interceptors.request.use((request) => {
-    request.headers.Authorization = `Bearer ${accessToken}`;
-    return request;
-  });
-
-  client.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      if (!error.response) {
-        return Promise.reject(error);
+  useEffect(() => {
+    GatewayClient.interceptors.request.use((request) => {
+      if (accessToken != null) {
+        request.headers.Authorization = `Bearer ${accessToken}`;
       }
+      return request;
+    });
 
-      const status = error.response.status;
+    GatewayClient.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (!error.response) {
+          return Promise.reject(error);
+        }
 
-      if (status === 401 || status === 403) {
-        const body = {
-          grant_type: "refresh_token",
-          refresh_token: refreshToken,
-        };
-        const config: AxiosRequestConfig = {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${btoa(`${oauth2Client.id}:${oauth2Client.secret}`)}`,
-          },
-        };
+        const status = error.response.status;
 
-        const response = await axios.post(urls.token, body, config); // tries to refresh token
-        const data = response.data;
-        const newIdToken = data.id_token;
-        const newAccessToken = data.access_token;
+        if ((status === 401 || status === 403) && refreshToken != null) {
+          const body = {
+            grant_type: "refresh_token",
+            refresh_token: refreshToken,
+          };
+          const config: AxiosRequestConfig = {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Authorization: `Basic ${btoa(`${oauth2Client.id}:${oauth2Client.secret}`)}`,
+            },
+          };
 
-        setAccessToken(newAccessToken);
-        setIdToken(newIdToken);
+          const response = await axios.post(urls.token, body, config); // tries to refresh token
 
-        tokenStorage.persistRefreshToken(data.refresh_token);
-        tokenStorage.persistIdToken(data.id_token);
+          if (response.status === 200) {
+            const data = response.data;
+            const newIdToken = data.id_token;
+            const newAccessToken = data.access_token;
 
-        if (response.status === 200) {
-          axios(error.config);
+            setAccessToken(newAccessToken);
+            setIdToken(newIdToken);
+
+            tokenStorage.persistRefreshToken(data.refresh_token);
+            tokenStorage.persistIdToken(data.id_token);
+            return axios(error.config);
+          }
         }
       }
-    }
-  );
+    );
+  }, [accessToken, refreshToken, setAccessToken, setIdToken]);
 
   useEffect(() => {
     const restore = async () => {
@@ -102,9 +122,30 @@ export function GatewayClientProvider({
     restore();
   }, [tokenStorage]);
 
+  useEffect(() => {
+    if (idToken != null) {
+      const jwt = jwtDecode(idToken);
+      const user: User = {
+        username: jwt.sub!,
+      };
+      setUser(user);
+    } else {
+      setUser(null);
+    }
+  }, [idToken]);
+
   return (
     <GatewayClientContext.Provider
-      value={{ client, refreshToken, accessToken, idToken }}
+      value={{
+        client: GatewayClient,
+        refreshToken,
+        accessToken,
+        idToken,
+        user,
+        setAccessToken,
+        setIdToken,
+        setRefreshToken,
+      }}
     >
       {children}
     </GatewayClientContext.Provider>

@@ -1,7 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { TrainingPlan, usePublicUser } from "common";
 import Mapper from "common/components/Mapper";
-import { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import Header from "../Header";
 
@@ -11,10 +10,6 @@ export type TrainingPlanViewProps = {
 
 export function TrainingPlanView({ plan }: TrainingPlanViewProps) {
   const { data: planOwner, error } = usePublicUser(plan.createdBy);
-
-  useEffect(() => {
-    console.log("owner:" + planOwner);
-  }, [planOwner]);
 
   return (
     <View className="flex flex-col rounded-lg p-10 bg-white">

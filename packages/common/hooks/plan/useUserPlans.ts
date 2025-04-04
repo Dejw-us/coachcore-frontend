@@ -9,8 +9,6 @@ export const useUserPlans = () => {
     queryKey: allUserPlanKey(),
     queryFn: async () => {
       const plans = await getUserPlans(client);
-      console.log("plans raw: " + plans);
-      console.log("plans json: " + JSON.stringify(plans));
       return plans;
     },
   });

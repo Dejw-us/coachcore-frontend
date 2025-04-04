@@ -8,6 +8,5 @@ export function useGatewayClient(): GatewayClient {
   if (!client) {
     throw new Error("You must provice GatewayClientProvider");
   }
-
   return client;
 }
