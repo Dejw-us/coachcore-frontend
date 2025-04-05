@@ -12,18 +12,19 @@ import {
   TokenStorage,
   Urls,
 } from "common";
-import { Text } from "react-native";
 import "../global.css";
 
-const tokenStorage: TokenStorage = {
+export const tokenStorage: TokenStorage = {
   persistRefreshToken: async (token) => {
     await AsyncStorage.setItem(REFRESH_TOKEN, token);
   },
   restoreRefreshToken: async () => await AsyncStorage.getItem(REFRESH_TOKEN),
+  clearRefreshToken: async () => await AsyncStorage.removeItem(REFRESH_TOKEN),
   persistIdToken: async (token) => {
     await AsyncStorage.setItem(ID_TOKEN, token);
   },
   restoreIdToken: async () => await AsyncStorage.getItem(ID_TOKEN),
+  clearIdToken: async () => await AsyncStorage.removeItem(ID_TOKEN),
 };
 
 const oauth2Client: OAuth2ClientCredentials = {
@@ -49,18 +50,6 @@ export default function RootLayout() {
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />
-        <Text
-          className="text-4xl m-2"
-          onPress={async () => {
-            console.log("test");
-            const token = await AsyncStorage.getItem(REFRESH_TOKEN);
-            const idToken = await AsyncStorage.getItem(ID_TOKEN);
-            console.log("Refresh token log: " + token);
-            console.log("Id token log: " + idToken);
-          }}
-        >
-          LOG
-        </Text>
       </GatewayClientProvider>
     </QueryClientProvider>
   );

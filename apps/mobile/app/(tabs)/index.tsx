@@ -1,7 +1,8 @@
+import UserPanel from "@/components/ui/UserPanel";
 import { useOAuth2Client } from "@/hooks/useOAuth2Client";
 import { useGatewayClient, usePlans } from "common";
 import Mapper from "common/components/Mapper";
-import { Text, View } from "react-native";
+import { ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TrainingPlanView } from "../../components/ui/TrainingPlanView";
 
@@ -14,16 +15,13 @@ export default function HomeScreen() {
   }
   return (
     <SafeAreaView className="bg-slate-100">
-      <Text onPress={async () => await login()}>
-        Login {user?.username || "Quest"}
-      </Text>
-      <Text onPress={async () => await logout()}>Logout</Text>
-      <View className="flex flex-col items-center">
+      <UserPanel />
+      <ScrollView className="mb-16">
         <Mapper
           value={plans}
           render={(plan) => <TrainingPlanView key={plan.id} plan={plan} />}
         />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

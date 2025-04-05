@@ -5,6 +5,7 @@ export type TrainingPlan = {
   description: string;
   weeks: number;
   goals: TrainingGoal[];
+  users: number;
 };
 
 export type TrainingGoal = {

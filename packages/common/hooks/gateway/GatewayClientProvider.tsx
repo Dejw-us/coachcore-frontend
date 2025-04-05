@@ -27,8 +27,10 @@ export type GatewayClient = {
 export type TokenStorage = {
   persistRefreshToken: (token: string) => void;
   restoreRefreshToken: () => Promise<string | null>;
+  clearRefreshToken: () => void;
   persistIdToken: (token: string) => void;
   restoreIdToken: () => Promise<string | null>;
+  clearIdToken: () => void;
 };
 
 export type Urls = {
@@ -48,7 +50,7 @@ export type GatewayClientProviderProps = {
   oauth2Client: OAuth2ClientCredentials;
 };
 
-export const GatewayClient = axios.create({
+const GatewayClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_GATEWAY_URL!,
   headers: {
     "Content-Type": "application/json",
@@ -67,14 +69,41 @@ export function GatewayClientProvider({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    GatewayClient.interceptors.request.use((request) => {
-      if (accessToken != null) {
-        request.headers.Authorization = `Bearer ${accessToken}`;
-      }
-      return request;
-    });
+    const restore = async () => {
+      console.log("Restoring tokens...");
+      const newRefreshToken = await tokenStorage.restoreRefreshToken();
+      const newIdToken = await tokenStorage.restoreIdToken();
+      console.log("Restored id token: " + newIdToken);
+      console.log("Restored refresh token: " + newRefreshToken);
+      setRefreshToken(newRefreshToken);
+      setIdToken(newIdToken);
+    };
+    restore();
+  }, [tokenStorage]);
 
-    GatewayClient.interceptors.response.use(
+  useEffect(() => {
+    if (refreshToken) {
+      tokenStorage.persistRefreshToken(refreshToken);
+    }
+  }, [refreshToken]);
+
+  useEffect(() => {
+    if (idToken) {
+      tokenStorage.persistIdToken(idToken);
+    }
+  }, [idToken]);
+
+  useEffect(() => {
+    const requestInterceptor = GatewayClient.interceptors.request.use(
+      (request) => {
+        if (accessToken != null) {
+          request.headers.Authorization = `Bearer ${accessToken}`;
+        }
+        return request;
+      }
+    );
+
+    const responseInerceptor = GatewayClient.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (!error.response) {
@@ -88,10 +117,14 @@ export function GatewayClientProvider({
             grant_type: "refresh_token",
             refresh_token: refreshToken,
           };
+          const clientCredentials = Buffer.from(
+            `${oauth2Client.id}:${oauth2Client.secret}`
+          ).toString("base64");
+
           const config: AxiosRequestConfig = {
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
-              Authorization: `Basic ${btoa(`${oauth2Client.id}:${oauth2Client.secret}`)}`,
+              Authorization: `Basic ${clientCredentials}`,
             },
           };
 
@@ -112,15 +145,12 @@ export function GatewayClientProvider({
         }
       }
     );
-  }, [accessToken, refreshToken, setAccessToken, setIdToken]);
 
-  useEffect(() => {
-    const restore = async () => {
-      setRefreshToken(await tokenStorage.restoreRefreshToken());
-      setIdToken(await tokenStorage.restoreIdToken());
+    return () => {
+      GatewayClient.interceptors.request.eject(requestInterceptor);
+      GatewayClient.interceptors.request.eject(responseInerceptor);
     };
-    restore();
-  }, [tokenStorage]);
+  }, [accessToken, refreshToken, setAccessToken, setIdToken]);
 
   useEffect(() => {
     if (idToken != null) {

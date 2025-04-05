@@ -1,6 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { tokenStorage } from "@/app/_layout";
 import axios, { AxiosRequestConfig } from "axios";
-import { ID_TOKEN, REFRESH_TOKEN, useGatewayClient } from "common";
+import { useGatewayClient } from "common";
 import * as AuthSession from "expo-auth-session";
 import { openBrowserAsync } from "expo-web-browser";
 import { useEffect } from "react";
@@ -59,9 +59,6 @@ export function useOAuth2Client(): OAuth2ClientState {
       setRefreshToken(data.refresh_token);
       setIdToken(data.id_token);
 
-      await AsyncStorage.setItem(REFRESH_TOKEN, data.refresh_token);
-      await AsyncStorage.setItem(ID_TOKEN, data.id_token);
-
       console.log("data: " + JSON.stringify(data));
     };
     fetchToken();
@@ -73,8 +70,8 @@ export function useOAuth2Client(): OAuth2ClientState {
       setAccessToken(null);
       setRefreshToken(null);
       setIdToken(null);
-      await AsyncStorage.removeItem(REFRESH_TOKEN);
-      await AsyncStorage.removeItem(ID_TOKEN);
+      await tokenStorage.clearRefreshToken();
+      await tokenStorage.clearIdToken();
       await openBrowserAsync(LOGOUT_URL);
     },
   };
