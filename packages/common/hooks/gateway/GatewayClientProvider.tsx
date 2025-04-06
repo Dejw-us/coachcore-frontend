@@ -21,6 +21,7 @@ async function fetchTokens(
   clientId: string,
   clientSecret: string
 ): Promise<Tokens | null> {
+  console.log("fetching tokens");
   const body = {
     grant_type: "refresh_token",
     refresh_token: refreshToken,
@@ -54,8 +55,12 @@ export function GatewayClientProvider({
 
   useEffect(() => {
     const restore = async () => {
+      console.log("Restoring tokens...");
       const newRefreshToken = await tokenStorage.restoreRefreshToken();
       const newIdToken = await tokenStorage.restoreIdToken();
+
+      console.log("Refresh token: " + newRefreshToken);
+      console.log("Id token: " + newIdToken);
 
       setRefreshToken(newRefreshToken);
       setIdToken(newIdToken);
@@ -65,12 +70,14 @@ export function GatewayClientProvider({
 
   useEffect(() => {
     if (refreshToken) {
+      console.log("Refresh persist");
       tokenStorage.persistRefreshToken(refreshToken);
     }
   }, [refreshToken]);
 
   useEffect(() => {
     if (idToken) {
+      console.log("Id persist");
       tokenStorage.persistIdToken(idToken);
     }
   }, [idToken]);

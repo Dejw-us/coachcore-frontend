@@ -14,15 +14,29 @@ import "../global.css";
 
 export const tokenStorage: TokenStorage = {
   persistRefreshToken: async (token) => {
+    console.log("Saving refresh token: " + token);
     await AsyncStorage.setItem(REFRESH_TOKEN, token);
   },
-  restoreRefreshToken: async () => await AsyncStorage.getItem(REFRESH_TOKEN),
-  clearRefreshToken: async () => await AsyncStorage.removeItem(REFRESH_TOKEN),
+  restoreRefreshToken: async () => {
+    console.log("Restoring refresh token");
+    return await AsyncStorage.getItem(REFRESH_TOKEN);
+  },
+  clearRefreshToken: async () => {
+    console.log("Clearing refresh token");
+    await AsyncStorage.removeItem(REFRESH_TOKEN);
+  },
   persistIdToken: async (token) => {
+    console.log("Saving id token: " + token);
     await AsyncStorage.setItem(ID_TOKEN, token);
   },
-  restoreIdToken: async () => await AsyncStorage.getItem(ID_TOKEN),
-  clearIdToken: async () => await AsyncStorage.removeItem(ID_TOKEN),
+  restoreIdToken: async () => {
+    console.log("Restoring id token");
+    return await AsyncStorage.getItem(ID_TOKEN);
+  },
+  clearIdToken: async () => {
+    console.log("Clearing id token");
+    await AsyncStorage.removeItem(ID_TOKEN);
+  },
 };
 
 const oauth2Client: OAuth2ClientCredentials = {

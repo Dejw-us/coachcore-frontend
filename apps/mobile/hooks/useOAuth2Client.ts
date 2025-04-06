@@ -1,4 +1,5 @@
 import { tokenStorage } from "@/app/_layout";
+import { useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosRequestConfig } from "axios";
 import { useGatewayClient } from "common";
 import * as AuthSession from "expo-auth-session";
@@ -20,6 +21,7 @@ export type OAuth2ClientState = {
 
 export function useOAuth2Client(): OAuth2ClientState {
   const { setAccessToken, setRefreshToken, setIdToken } = useGatewayClient();
+  const client = useQueryClient();
 
   const [_response, result, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -65,13 +67,25 @@ export function useOAuth2Client(): OAuth2ClientState {
   }, [result]);
 
   return {
-    login: async () => await promptAsync(),
+    login: async () => {
+      client.invalidateQueries();
+      client.removeQueries();
+      client.resetQueries();
+      client.clear();
+      await promptAsync();
+    },
     logout: async () => {
+      client.invalidateQueries();
+      client.removeQueries();
+      client.resetQueries();
+      client.clear();
+      console.log("Clearing tokens");
+      await tokenStorage.clearRefreshToken();
+      await tokenStorage.clearIdToken();
+      console.log("Cleared tokens");
       setAccessToken(null);
       setRefreshToken(null);
       setIdToken(null);
-      await tokenStorage.clearRefreshToken();
-      await tokenStorage.clearIdToken();
       await openBrowserAsync(LOGOUT_URL);
     },
   };

@@ -16,6 +16,7 @@ export function PlanSaveButton({ planId }: PlanSaveButtonProps) {
 
   useEffect(() => {
     if (savedPlans) {
+      console.log("Saved plans: " + JSON.stringify(savedPlans));
       setIsSaved(savedPlans.some((plan) => plan.savedPlan.id === planId));
     }
   }, [savedPlans]);
