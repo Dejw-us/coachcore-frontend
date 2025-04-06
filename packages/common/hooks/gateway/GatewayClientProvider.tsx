@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   GatewayClientProviderProps,
   Tokens,
+  TokenStorage,
   User,
 } from "./GatewayClient.types";
 import { GatewayClientContext } from "./GatewayClientContext";
@@ -17,11 +18,12 @@ const GatewayClient = axios.create({
 
 async function fetchTokens(
   tokenUrl: string,
-  refreshToken: string,
+  tokenStorage: TokenStorage,
   clientId: string,
   clientSecret: string
 ): Promise<Tokens | null> {
   console.log("fetching tokens");
+  const refreshToken = await tokenStorage.restoreRefreshToken();
   const body = {
     grant_type: "refresh_token",
     refresh_token: refreshToken,
@@ -107,7 +109,7 @@ export function GatewayClientProvider({
         if ((status === 401 || status === 403) && refreshToken != null) {
           const tokens = await fetchTokens(
             urls.token,
-            refreshToken,
+            tokenStorage,
             oauth2Client.id,
             oauth2Client.secret
           );
@@ -131,7 +133,7 @@ export function GatewayClientProvider({
       GatewayClient.interceptors.request.eject(requestInterceptor);
       GatewayClient.interceptors.request.eject(responseInerceptor);
     };
-  }, [accessToken, refreshToken, setAccessToken, setIdToken]);
+  }, [accessToken, refreshToken]);
 
   useEffect(() => {
     if (idToken != null) {

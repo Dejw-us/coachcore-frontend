@@ -72,13 +72,10 @@ export function useOAuth2Client(): OAuth2ClientState {
       client.removeQueries();
       client.resetQueries();
       client.clear();
+
       await promptAsync();
     },
     logout: async () => {
-      client.invalidateQueries();
-      client.removeQueries();
-      client.resetQueries();
-      client.clear();
       console.log("Clearing tokens");
       await tokenStorage.clearRefreshToken();
       await tokenStorage.clearIdToken();
@@ -87,6 +84,11 @@ export function useOAuth2Client(): OAuth2ClientState {
       setRefreshToken(null);
       setIdToken(null);
       await openBrowserAsync(LOGOUT_URL);
+      console.log("Invlaidating queries");
+      client.invalidateQueries();
+      client.removeQueries();
+      client.resetQueries();
+      client.clear();
     },
   };
 }

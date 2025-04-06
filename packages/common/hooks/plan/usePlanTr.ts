@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPlanTr } from "../../services/api";
-import { delay, planTrKey } from "../../utils";
+import { planTrKey } from "../../utils";
 import { useGatewayClient } from "../gateway";
 
 export function usePlanTr(planId: string) {
@@ -9,7 +9,6 @@ export function usePlanTr(planId: string) {
   return useQuery({
     queryKey: planTrKey(planId),
     queryFn: async () => {
-      delay(2000);
       return getPlanTr(client, planId);
     },
   });
