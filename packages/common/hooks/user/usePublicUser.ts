@@ -5,6 +5,7 @@ import { useGatewayClient } from "../gateway";
 
 export function usePublicUser(username: string) {
   const gatewayClient = useGatewayClient();
+
   return useQuery({
     queryKey: publicUserKey(username),
     queryFn: async () => await getPublicUser(gatewayClient, username),

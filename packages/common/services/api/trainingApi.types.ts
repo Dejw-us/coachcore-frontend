@@ -90,9 +90,23 @@ export type CreateTrainingUnit = {
   name: string;
 };
 
+export type SavedPlan = {
+  userId: string;
+  savedPlan: TrainingPlan;
+};
+
+export type TrainingPlanTr = {
+  trainingDays: number;
+  restDays: number;
+};
+
 export type UnitDisplayPatch = {
   updater: "RATE" | "INTENSITY" | "WEIGHT";
   display: boolean;
+};
+
+export type TrainingPlanRating = {
+  stars: 0 | 1 | 2 | 3 | 4 | 5;
 };
 
 export type UnitDisplay = {

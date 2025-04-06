@@ -4,14 +4,12 @@ import "react-native-reanimated";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GatewayClientProvider, ID_TOKEN, REFRESH_TOKEN } from "common";
 import {
-  GatewayClientProvider,
-  ID_TOKEN,
   OAuth2ClientCredentials,
-  REFRESH_TOKEN,
   TokenStorage,
   Urls,
-} from "common";
+} from "common/hooks/gateway/GatewayClient.types";
 import "../global.css";
 
 export const tokenStorage: TokenStorage = {

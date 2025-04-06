@@ -1,37 +1,83 @@
-import { GatewayClient } from "../../hooks";
+import { AxiosRequestConfig } from "axios";
+import { GatewayClientState } from "../../hooks/gateway/GatewayClient.types";
 import { request } from "../../utils/index";
 import {
   CreateTrainingPlan,
   DeletedObject,
+  ExerciseCategory,
+  SavedPlan,
   TrainingPlan,
+  TrainingPlanRating,
+  TrainingPlanTr,
 } from "./trainingApi.types";
 
 export function deletePlan(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string
 ): Promise<DeletedObject> {
   return request(client.delete(`/training-plans/${planId}`));
 }
 
-export function getPlans({ client }: GatewayClient): Promise<TrainingPlan[]> {
+export function getSavedPlans({
+  client,
+}: GatewayClientState): Promise<SavedPlan[]> {
+  return request(client.get("/v1/saved-plans"));
+}
+
+export function getPlans({
+  client,
+}: GatewayClientState): Promise<TrainingPlan[]> {
   return request(client.get("/v1/public/training-plans"));
+}
+
+export function getPlanRating(
+  { client }: GatewayClientState,
+  planId: string
+): Promise<TrainingPlanRating> {
+  return request(client.get(`/v1/rating/${planId}/average`));
 }
 
 export function getUserPlans({
   client,
-}: GatewayClient): Promise<TrainingPlan[]> {
+}: GatewayClientState): Promise<TrainingPlan[]> {
   return request(client.get("v1/training-plans/me"));
 }
 
+export function getPlanTr(
+  { client }: GatewayClientState,
+  planId: string
+): Promise<TrainingPlanTr> {
+  return request(client.get(`/v1/public/training-plans/${planId}/tr`));
+}
+
+export function postSavePlan(
+  { client }: GatewayClientState,
+  planId: string
+): Promise<SavedPlan> {
+  const config: AxiosRequestConfig = {
+    params: {
+      planId,
+    },
+  };
+  return request(client.post("/v1/saved-plans", {}, config));
+}
+
+export function getPlanCategory(
+  { client }: GatewayClientState,
+  planId: string
+): Promise<ExerciseCategory> {
+  return request(client.get(`/v1/public/training-plans/${planId}/category`));
+}
+
 export function getPlan(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   id: string
 ): Promise<TrainingPlan> {
   return request(client.get(`v1/public/training-plans/${id}`));
 }
 
 export function postPlan(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   plan: CreateTrainingPlan
 ): Promise<TrainingPlan> {
   return request(client.post("v1/training-plans", plan));

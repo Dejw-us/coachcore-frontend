@@ -1,8 +1,8 @@
 import { useContext } from "react";
+import { GatewayClientState } from "./GatewayClient.types";
 import { GatewayClientContext } from "./GatewayClientContext";
-import { GatewayClient } from "./GatewayClientProvider";
 
-export function useGatewayClient(): GatewayClient {
+export function useGatewayClient(): GatewayClientState {
   var client = useContext(GatewayClientContext);
 
   if (!client) {

@@ -1,8 +1,9 @@
+import MiddleSafeAreaView from "@/components/MiddleSafeAreaView";
 import UserPanel from "@/components/ui/UserPanel";
 import { useOAuth2Client } from "@/hooks/useOAuth2Client";
 import { useGatewayClient, usePlans } from "common";
 import Mapper from "common/components/Mapper";
-import { ScrollView, Text } from "react-native";
+import { ActivityIndicator, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TrainingPlanView } from "../../components/ui/TrainingPlanView";
 
@@ -10,9 +11,22 @@ export default function HomeScreen() {
   const { data: plans, error, isLoading } = usePlans();
   const { user } = useGatewayClient();
   const { login, logout } = useOAuth2Client();
-  if (!plans || isLoading) {
-    return <Text>Loading {error && error.message}</Text>;
+
+  if (isLoading) {
+    return (
+      <MiddleSafeAreaView>
+        <ActivityIndicator size="large" />
+      </MiddleSafeAreaView>
+    );
   }
+  if (!plans) {
+    return (
+      <SafeAreaView>
+        <Text>Failed to load plans</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="bg-slate-100">
       <UserPanel />

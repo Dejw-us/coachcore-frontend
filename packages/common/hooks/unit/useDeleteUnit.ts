@@ -6,12 +6,14 @@ import {
   planUnitsKey,
   unitKey,
 } from "../../utils";
+import { useGatewayClient } from "../gateway";
 
 export default function useDeleteUnit(planId: string, unitId: string) {
   const queryClient = useQueryClient();
+  const gatewayClient = useGatewayClient();
 
   return useMutation({
-    mutationFn: () => deleteUnit(planId, unitId),
+    mutationFn: () => deleteUnit(gatewayClient, planId, unitId),
     onSuccess: (deletedUnit: DeletedObject) => {
       invalidateQueries(queryClient, unitKey(deletedUnit.id));
       filterQueryData<TrainingUnit>(

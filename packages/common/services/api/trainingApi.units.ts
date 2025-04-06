@@ -1,14 +1,15 @@
-import { GatewayClient } from "../../hooks";
+import { GatewayClientState } from "../../hooks/gateway/GatewayClient.types";
 import { request } from "../../utils";
 import {
   CreateTrainingUnit,
+  DeletedObject,
   TrainingUnit,
   UnitDisplay,
   UnitDisplayPatch,
 } from "./trainingApi.types.js";
 
 export function getUnit(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string,
   unitId: string
 ): Promise<TrainingUnit> {
@@ -16,7 +17,7 @@ export function getUnit(
 }
 
 export function postUnit(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string,
   unit: CreateTrainingUnit
 ): Promise<TrainingUnit> {
@@ -24,7 +25,7 @@ export function postUnit(
 }
 
 export function getUnitDisplay(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string,
   unitId: string
 ): Promise<UnitDisplay> {
@@ -34,26 +35,26 @@ export function getUnitDisplay(
 }
 
 export function patchUnitDisplay(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string,
   unitId: string,
   patch: UnitDisplayPatch
-) {
+): Promise<UnitDisplay> {
   return request(
     client.patch(`/training-plans/${planId}/units/${unitId}/display`, patch)
   );
 }
 
 export function deleteUnit(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string,
   unitId: string
-) {
+): Promise<DeletedObject> {
   return request(client.delete(`/training-plans/${planId}/units/${unitId}`));
 }
 
 export function getUnits(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string
 ): Promise<TrainingUnit[]> {
   return request(client.get(`/training-plans/${planId}/units`));

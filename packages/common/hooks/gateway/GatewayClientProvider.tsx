@@ -1,54 +1,12 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { jwtDecode } from "jwt-decode";
-import React, {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
+import {
+  GatewayClientProviderProps,
+  Tokens,
+  User,
+} from "./GatewayClient.types";
 import { GatewayClientContext } from "./GatewayClientContext";
-
-export type User = {
-  username: string;
-};
-
-export type GatewayClient = {
-  client: AxiosInstance;
-  refreshToken: string | null;
-  setRefreshToken: Dispatch<SetStateAction<string | null>>;
-  accessToken: string | null;
-  setAccessToken: Dispatch<SetStateAction<string | null>>;
-  idToken: string | null;
-  setIdToken: Dispatch<SetStateAction<string | null>>;
-  user: User | null;
-};
-
-export type TokenStorage = {
-  persistRefreshToken: (token: string) => void;
-  restoreRefreshToken: () => Promise<string | null>;
-  clearRefreshToken: () => void;
-  persistIdToken: (token: string) => void;
-  restoreIdToken: () => Promise<string | null>;
-  clearIdToken: () => void;
-};
-
-export type Urls = {
-  token: string;
-  gateway: string;
-};
-
-export type OAuth2ClientCredentials = {
-  id: string;
-  secret: string;
-};
-
-export type GatewayClientProviderProps = {
-  children: ReactNode;
-  tokenStorage: TokenStorage;
-  urls: Urls;
-  oauth2Client: OAuth2ClientCredentials;
-};
 
 const GatewayClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_GATEWAY_URL!,
@@ -56,6 +14,32 @@ const GatewayClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+async function fetchTokens(
+  tokenUrl: string,
+  refreshToken: string,
+  clientId: string,
+  clientSecret: string
+): Promise<Tokens | null> {
+  const body = {
+    grant_type: "refresh_token",
+    refresh_token: refreshToken,
+  };
+  const clientCredentials = btoa(`${clientId}:${clientSecret}`);
+
+  const config: AxiosRequestConfig = {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Basic ${clientCredentials}`,
+    },
+  };
+  const response = await axios.post(tokenUrl, body, config);
+  if (response.status === 200) {
+    return response.data;
+  }
+
+  return null;
+}
 
 export function GatewayClientProvider({
   children,
@@ -70,11 +54,9 @@ export function GatewayClientProvider({
 
   useEffect(() => {
     const restore = async () => {
-      console.log("Restoring tokens...");
       const newRefreshToken = await tokenStorage.restoreRefreshToken();
       const newIdToken = await tokenStorage.restoreIdToken();
-      console.log("Restored id token: " + newIdToken);
-      console.log("Restored refresh token: " + newRefreshToken);
+
       setRefreshToken(newRefreshToken);
       setIdToken(newIdToken);
     };
@@ -94,6 +76,10 @@ export function GatewayClientProvider({
   }, [idToken]);
 
   useEffect(() => {
+    if (!refreshToken) {
+      return;
+    }
+
     const requestInterceptor = GatewayClient.interceptors.request.use(
       (request) => {
         if (accessToken != null) {
@@ -111,35 +97,23 @@ export function GatewayClientProvider({
         }
 
         const status = error.response.status;
-
         if ((status === 401 || status === 403) && refreshToken != null) {
-          const body = {
-            grant_type: "refresh_token",
-            refresh_token: refreshToken,
-          };
-          const clientCredentials = Buffer.from(
-            `${oauth2Client.id}:${oauth2Client.secret}`
-          ).toString("base64");
+          const tokens = await fetchTokens(
+            urls.token,
+            refreshToken,
+            oauth2Client.id,
+            oauth2Client.secret
+          );
 
-          const config: AxiosRequestConfig = {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              Authorization: `Basic ${clientCredentials}`,
-            },
-          };
-
-          const response = await axios.post(urls.token, body, config); // tries to refresh token
-
-          if (response.status === 200) {
-            const data = response.data;
-            const newIdToken = data.id_token;
-            const newAccessToken = data.access_token;
+          if (tokens) {
+            const newIdToken = tokens.id_token;
+            const newAccessToken = tokens.access_token;
 
             setAccessToken(newAccessToken);
             setIdToken(newIdToken);
 
-            tokenStorage.persistRefreshToken(data.refresh_token);
-            tokenStorage.persistIdToken(data.id_token);
+            tokenStorage.persistRefreshToken(tokens.refresh_token);
+            tokenStorage.persistIdToken(newIdToken);
             return axios(error.config);
           }
         }

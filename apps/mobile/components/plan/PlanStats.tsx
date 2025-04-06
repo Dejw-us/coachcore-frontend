@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 
 export type PlanStatsProps = {
   users: number;
-  stars: 1 | 2 | 3 | 4 | 5;
+  stars: 0 | 1 | 2 | 3 | 4 | 5;
 };
 
 export default function PlanStats({ users, stars }: PlanStatsProps) {
@@ -11,7 +11,8 @@ export default function PlanStats({ users, stars }: PlanStatsProps) {
       <Text>
         {users} {users === 1 ? "User" : "Users"}
       </Text>
-      <Text>{"*".repeat(stars)}</Text>
+
+      <Text>{stars === 0 ? "No reviews" : "*".repeat(stars)}</Text>
     </View>
   );
 }

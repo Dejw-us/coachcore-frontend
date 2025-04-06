@@ -5,6 +5,7 @@ import { useGatewayClient } from "../gateway";
 
 export const useUserPlans = () => {
   const client = useGatewayClient();
+
   return useQuery({
     queryKey: allUserPlanKey(),
     queryFn: async () => {

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { patchSet, TrainingSet, TrainingSetPatch } from "../../services/api";
 import { filterAndAddQueryData, setsKey } from "../../utils";
+import { useGatewayClient } from "../gateway";
 
 export function useUpdateSet(
   planId: string,
@@ -8,9 +9,11 @@ export function useUpdateSet(
   setId: string
 ) {
   const queryClient = useQueryClient();
+  const gatewayClient = useGatewayClient();
 
   return useMutation({
-    mutationFn: (data: TrainingSetPatch) => patchSet(planId, setId, data),
+    mutationFn: (data: TrainingSetPatch) =>
+      patchSet(gatewayClient, planId, setId, data),
     onSuccess: (updatedSet) =>
       filterAndAddQueryData<TrainingSet>(
         queryClient,

@@ -5,6 +5,7 @@ import {
   TrainingExercise,
 } from "../../services/api";
 import { exercisesKey, filterAndAddQueryData, filterId } from "../../utils";
+import { useGatewayClient } from "../gateway";
 
 export default function useUpdateExercise(
   planId: string,
@@ -12,10 +13,17 @@ export default function useUpdateExercise(
   exerciseId: string
 ) {
   const quertClient = useQueryClient();
+  const gatewayClient = useGatewayClient();
 
   return useMutation({
     mutationFn: (patch: ExercisePatch, catalogExerciseId?: string) =>
-      patchExercise(planId, exerciseId, patch, catalogExerciseId),
+      patchExercise(
+        gatewayClient,
+        planId,
+        exerciseId,
+        patch,
+        catalogExerciseId
+      ),
     onSuccess: (updateExercise: TrainingExercise) =>
       filterAndAddQueryData<TrainingExercise>(
         quertClient,

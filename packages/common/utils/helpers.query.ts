@@ -1,5 +1,6 @@
 import { InvalidateQueryFilters, QueryClient } from "@tanstack/react-query";
 
+export const savedPlanKey = () => ["savedAllPlans"];
 export const planKey = (planId: string) => ["plan", planId];
 export const allPlansKey = () => ["allPlans"];
 export const allUserPlanKey = () => ["userAllPlans"];
@@ -18,6 +19,9 @@ export const setsKey = (planId: string, exerciseId: string) => [
 ];
 export const unitDisplayKey = (unitId: string) => ["unitDisplay", unitId];
 export const publicUserKey = (username: string) => ["publicUser", username];
+export const planRatingKey = (planId: string) => ["planRating", planId];
+export const planTrKey = (planId: string) => ["planTr", planId];
+export const planCategoryKey = (planId: string) => ["planCategory", planId];
 
 export function filterAndAddQueryData<T>(
   client: QueryClient,

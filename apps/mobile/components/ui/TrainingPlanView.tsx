@@ -1,5 +1,11 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import { TrainingPlan, useLogError, usePublicUser } from "common";
+import {
+  TrainingPlan,
+  useLogError,
+  usePlanCategory,
+  usePlanRating,
+  usePlanTr,
+  usePublicUser,
+} from "common";
 import { View } from "react-native";
 import PlanDescription from "../plan/PlanDescription";
 import PlanDetails from "../plan/PlanDetails";
@@ -7,6 +13,7 @@ import PlanGoals from "../plan/PlanGoals";
 import PlanHeader from "../plan/PlanHeader";
 import PlanOwner from "../plan/PlanOwner";
 import PlanPricing from "../plan/PlanPricing";
+import { PlanSaveButton } from "../plan/PlanSaveButton";
 import PlanStats from "../plan/PlanStats";
 import Separator from "../Separator";
 
@@ -16,8 +23,14 @@ export type TrainingPlanViewProps = {
 
 export function TrainingPlanView({ plan }: TrainingPlanViewProps) {
   const { data: planOwner, error } = usePublicUser(plan.createdBy);
+  const { data: rating, error: ratingError } = usePlanRating(plan.id);
+  const { data: tr, error: trError } = usePlanTr(plan.id);
+  const { data: category, error: categoryError } = usePlanCategory(plan.id);
 
-  useLogError(error);
+  useLogError(categoryError, "usePlanCategory");
+  useLogError(trError, "usePlanTr");
+  useLogError(ratingError, "usePlanRating");
+  useLogError(error, "usePublicUser");
 
   return (
     <View className="w-full">
@@ -26,16 +39,16 @@ export function TrainingPlanView({ plan }: TrainingPlanViewProps) {
         <PlanDescription description={plan.description} />
         <PlanGoals goals={plan.goals} />
         <Separator />
-        <PlanDetails weeks={plan.weeks} />
-        <PlanStats stars={2} users={plan.users} />
+        <PlanDetails weeks={plan.weeks} tr={tr} category={category} />
+        <PlanStats stars={rating?.stars || 0} users={plan.users} />
         <Separator />
         <View className="flex flex-row justify-between mb-6 mt-2">
-          <MaterialIcons className="self-center" name="save-alt" size={32} />
+          <PlanSaveButton planId={plan.id} />
           <PlanPricing currency="PLN" price={0} />
         </View>
         <PlanOwner
-          username={planOwner?.username || "Loading..."}
-          description={planOwner?.description || "Loading..."}
+          username={planOwner?.username || "Failed to load username"}
+          description={planOwner?.description || "This user has no description"}
         />
       </View>
     </View>

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteExercise, TrainingExercise } from "../../services/api";
 import { exercisesKey, filterQueryData } from "../../utils";
+import { useGatewayClient } from "../gateway";
 
 export default function useDeleteExercise(
   planId: string,
@@ -8,9 +9,10 @@ export default function useDeleteExercise(
   exerciseId: string
 ) {
   const queryClient = useQueryClient();
+  const gatewayClient = useGatewayClient();
 
   return useMutation({
-    mutationFn: () => deleteExercise(planId, exerciseId),
+    mutationFn: () => deleteExercise(gatewayClient, planId, exerciseId),
     onSuccess: (deletedExercise) =>
       filterQueryData<TrainingExercise>(
         queryClient,

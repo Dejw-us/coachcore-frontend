@@ -1,4 +1,6 @@
 import { createContext } from "react";
-import { GatewayClient } from "./GatewayClientProvider";
+import { GatewayClientState } from "./GatewayClient.types";
 
-export const GatewayClientContext = createContext<GatewayClient | null>(null);
+export const GatewayClientContext = createContext<GatewayClientState | null>(
+  null
+);
