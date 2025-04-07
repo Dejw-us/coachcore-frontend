@@ -21,9 +21,9 @@ export default function HomeScreen() {
   }
   if (!plans) {
     return (
-      <SafeAreaView>
+      <MiddleSafeAreaView>
         <Text>Failed to load plans</Text>
-      </SafeAreaView>
+      </MiddleSafeAreaView>
     );
   }
 

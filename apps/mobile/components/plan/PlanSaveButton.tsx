@@ -1,7 +1,11 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import { useLogError, useSavedPlans, useSavePlan } from "common";
+import {
+  useDeleteSavedPlan,
+  useLogError,
+  useSavedPlans,
+  useSavePlan,
+} from "common";
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
 
 export type PlanSaveButtonProps = {
   planId: string;
@@ -11,6 +15,7 @@ export function PlanSaveButton({ planId }: PlanSaveButtonProps) {
   const { mutate: savePlan } = useSavePlan(planId);
   const { data: savedPlans, error } = useSavedPlans();
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const { mutate: unfollowPlan } = useDeleteSavedPlan(planId);
 
   useLogError(error, "useSavedPlans");
 
@@ -22,14 +27,16 @@ export function PlanSaveButton({ planId }: PlanSaveButtonProps) {
   }, [savedPlans]);
 
   if (isSaved) {
-    return <Text>Saved</Text>;
+    return (
+      <MaterialIcons name="bookmark" size={32} onPress={() => unfollowPlan()} />
+    );
   }
 
   return (
     <MaterialIcons
       onPress={() => savePlan()}
       className="self-center"
-      name="save-alt"
+      name="bookmark-border"
       size={32}
     />
   );

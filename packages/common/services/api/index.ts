@@ -1,3 +1,4 @@
+export * from "./api.types";
 export * from "./gatewayClient";
 export * from "./trainingApi.catalog";
 export * from "./trainingApi.exercises";

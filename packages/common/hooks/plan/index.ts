@@ -1,5 +1,6 @@
 export * from "./useCreatePlan";
 export * from "./useDeletePlan";
+export * from "./useDeleteSavedPlan";
 export * from "./usePlan";
 export * from "./usePlanCategory";
 export * from "./usePlanRating";

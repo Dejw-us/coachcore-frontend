@@ -126,7 +126,3 @@ export type ExerciseCategory = {
   name: string;
   description: string;
 };
-
-export type DeletedObject = {
-  id: string;
-};

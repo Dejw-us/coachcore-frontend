@@ -1,9 +1,9 @@
 import { AxiosRequestConfig } from "axios";
 import { GatewayClientState } from "../../hooks/gateway/GatewayClient.types";
 import { request } from "../../utils/index";
+import { DeletedObject, Message } from "./api.types";
 import {
   CreateTrainingPlan,
-  DeletedObject,
   ExerciseCategory,
   SavedPlan,
   TrainingPlan,
@@ -16,6 +16,18 @@ export function deletePlan(
   planId: string
 ): Promise<DeletedObject> {
   return request(client.delete(`/training-plans/${planId}`));
+}
+
+export function deleteSavedPlan(
+  { client }: GatewayClientState,
+  planId: string
+): Promise<Message> {
+  const config: AxiosRequestConfig = {
+    params: {
+      planId,
+    },
+  };
+  return request(client.delete("/v1/saved-plans", config));
 }
 
 export function getSavedPlans({

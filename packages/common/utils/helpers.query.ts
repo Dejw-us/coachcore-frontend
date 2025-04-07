@@ -1,6 +1,6 @@
 import { InvalidateQueryFilters, QueryClient } from "@tanstack/react-query";
 
-export const savedPlanKey = () => ["savedAllPlans"];
+export const savedPlansKey = () => ["savedAllPlans"];
 export const planKey = (planId: string) => ["plan", planId];
 export const allPlansKey = () => ["allPlans"];
 export const allUserPlanKey = () => ["userAllPlans"];
