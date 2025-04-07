@@ -8,4 +8,5 @@ export * from "./usePlans";
 export * from "./usePlanTr";
 export * from "./useSavedPlans";
 export * from "./useSavePlan";
+export * from "./useUpdatePlanRating";
 export * from "./useUserPlans";

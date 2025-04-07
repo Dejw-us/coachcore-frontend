@@ -74,6 +74,14 @@ export function postSavePlan(
   return request(client.post("/v1/saved-plans", {}, config));
 }
 
+export function putPlanRating(
+  { client }: GatewayClientState,
+  planId: string,
+  stars: number
+): Promise<TrainingPlanRating> {
+  return request(client.put(`/v1/rating/${planId}`, { stars }));
+}
+
 export function getPlanCategory(
   { client }: GatewayClientState,
   planId: string
