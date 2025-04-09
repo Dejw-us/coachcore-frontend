@@ -6,6 +6,7 @@ export type TrainingPlan = {
   weeks: number;
   goals: TrainingGoal[];
   users: number;
+  tags: string[];
 };
 
 export type TrainingGoal = {
@@ -75,6 +76,7 @@ export type TrainingUnit = {
   id: string;
   name: string;
   notes: string;
+  index: number;
   dayOfWeek: DayOfWeek;
 };
 

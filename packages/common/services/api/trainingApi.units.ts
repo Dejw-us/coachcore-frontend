@@ -1,8 +1,8 @@
 import { GatewayClientState } from "../../hooks/gateway/GatewayClient.types";
 import { request } from "../../utils";
+import { DeletedObject } from "./api.types";
 import {
   CreateTrainingUnit,
-  DeletedObject,
   TrainingUnit,
   UnitDisplay,
   UnitDisplayPatch,
@@ -13,7 +13,7 @@ export function getUnit(
   planId: string,
   unitId: string
 ): Promise<TrainingUnit> {
-  return request(client.get(`/training-plans/${planId}/units/${unitId}`));
+  return request(client.get(`/v1/training-plans/${planId}/units/${unitId}`));
 }
 
 export function postUnit(
@@ -21,7 +21,7 @@ export function postUnit(
   planId: string,
   unit: CreateTrainingUnit
 ): Promise<TrainingUnit> {
-  return request(client.post(`/training-plans/${planId}/units`, unit));
+  return request(client.post(`/v1/training-plans/${planId}/units`, unit));
 }
 
 export function getUnitDisplay(
@@ -30,7 +30,7 @@ export function getUnitDisplay(
   unitId: string
 ): Promise<UnitDisplay> {
   return request(
-    client.get(`/training-plans/${planId}/units/${unitId}/display`)
+    client.get(`/v1/training-plans/${planId}/units/${unitId}/display`)
   );
 }
 
@@ -41,7 +41,7 @@ export function patchUnitDisplay(
   patch: UnitDisplayPatch
 ): Promise<UnitDisplay> {
   return request(
-    client.patch(`/training-plans/${planId}/units/${unitId}/display`, patch)
+    client.patch(`/v1/training-plans/${planId}/units/${unitId}/display`, patch)
   );
 }
 
@@ -50,12 +50,12 @@ export function deleteUnit(
   planId: string,
   unitId: string
 ): Promise<DeletedObject> {
-  return request(client.delete(`/training-plans/${planId}/units/${unitId}`));
+  return request(client.delete(`/v1/training-plans/${planId}/units/${unitId}`));
 }
 
 export function getUnits(
   { client }: GatewayClientState,
   planId: string
 ): Promise<TrainingUnit[]> {
-  return request(client.get(`/training-plans/${planId}/units`));
+  return request(client.get(`/v1/public/training-plans/${planId}/units`));
 }

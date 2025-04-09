@@ -9,7 +9,7 @@ export default function PlanDescription({ description }: PlanDescriptionProps) {
   return (
     <View>
       <Header value="Description" />
-      <Text className="mb-5">{description}</Text>
+      <Text>{description}</Text>
     </View>
   );
 }

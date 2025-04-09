@@ -1,19 +1,13 @@
 import { View } from "react-native";
 
 export type SeparatorProps = {
-  color?: string;
-  size?: number;
-  width?: number;
+  className?: string;
 };
 
-export default function Separator({
-  color = "slate-300",
-  size = 1,
-  width,
-}: SeparatorProps) {
+export default function Separator({ className }: SeparatorProps) {
   return (
     <View
-      className={`${width ? `w-${width}` : "w-full"} h-${size} bg-${color} mt-5 mb-5 rounded-lg`}
+      className={`${className ? className : "w-full h-1 bg-slate-300"} rounded-lg`}
     />
   );
 }
