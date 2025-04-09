@@ -10,7 +10,7 @@ export default function CenterView({ children, className }: CenterViewProps) {
   return (
     <View className="w-full">
       <View
-        className={`rounded-lg ${className ? className : "p-10 m-2.5"} bg-white flex flex-col`}
+        className={`rounded-lg ${className ? className : "p-10 m-2.5"} bg-white flex flex-col shadow-lg`}
       >
         {children}
       </View>

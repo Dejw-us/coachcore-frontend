@@ -1,15 +1,16 @@
-import { Text } from "react-native";
+import { Text, TextProps } from "react-native";
 
 export type HeaderProps = {
   size?: "small" | "medium" | "big" | "large";
   value: string;
   className?: string;
-};
+} & TextProps;
 
 export default function Header({
   value,
   className,
   size = "medium",
+  ...rest
 }: HeaderProps) {
   const sizeClass = {
     small: "text-xl",
@@ -17,5 +18,9 @@ export default function Header({
     big: "text-3xl",
     large: "text-4xl",
   }[size];
-  return <Text className={`${sizeClass} ${className}`}>{value}</Text>;
+  return (
+    <Text {...rest} className={`${sizeClass} ${className}`}>
+      {value}
+    </Text>
+  );
 }

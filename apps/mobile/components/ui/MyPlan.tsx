@@ -1,5 +1,6 @@
+import { useViewPlan } from "@/hooks/useViewPlan";
 import { TrainingPlan } from "common";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import CenterView from "../CenterView";
 
 export type MyPlanProps = {
@@ -7,9 +8,16 @@ export type MyPlanProps = {
 };
 
 export default function MyPlan({ plan }: MyPlanProps) {
+  const { viewPlan } = useViewPlan(plan, true);
+
   return (
     <CenterView>
-      <Text>{plan.name}</Text>
+      <View className="flex flex-row justify-between">
+        <Text>{plan.name}</Text>
+        <Text onPress={viewPlan} className="border-1 p-1 border rounded">
+          Edit
+        </Text>
+      </View>
     </CenterView>
   );
 }

@@ -1,3 +1,4 @@
+import { Entypo } from "@expo/vector-icons";
 import { TrainingGoal } from "common";
 import Mapper from "common/components/Mapper";
 import { Text, View } from "react-native";
@@ -13,7 +14,12 @@ export default function PlanGoals({ goals }: PlanGoalsProps) {
       <Header value="Goals" />
       <Mapper
         value={goals}
-        render={(goal) => <Text key={goal.id}>- {goal.description}</Text>}
+        render={(goal) => (
+          <View className="flex flex-row">
+            <Entypo name="dot-single" className="self-center" size={15} />
+            <Text key={goal.id}>{goal.description}</Text>
+          </View>
+        )}
       />
     </View>
   );

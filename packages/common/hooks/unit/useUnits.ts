@@ -8,6 +8,11 @@ export const useUnits = (planId: string) => {
 
   return useQuery({
     queryKey: planUnitsKey(planId),
-    queryFn: async () => getUnits(gatewayClient, planId),
+    queryFn: async () => {
+      const units = await getUnits(gatewayClient, planId);
+      if (units) {
+        return units.sort((a, b) => a.index - b.index);
+      }
+    },
   });
 };

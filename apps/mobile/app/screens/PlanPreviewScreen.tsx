@@ -1,13 +1,9 @@
 import PlanPreview from "@/components/ui/PlanPreview";
-import { Stack, useLocalSearchParams } from "expo-router";
-
-type Params = {
-  planName: string;
-  planId: string;
-};
+import { useViewPlanParams } from "@/hooks/useViewPlanParams";
+import { Stack } from "expo-router";
 
 export default function PlanPreviewScreen() {
-  const params = useLocalSearchParams<Params>();
+  const params = useViewPlanParams();
 
   return (
     <>
