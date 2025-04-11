@@ -1,13 +1,10 @@
-import { GatewayClient } from "../../hooks";
+import { GatewayClientState } from "../../hooks/gateway/GatewayClient.types";
 import { request } from "../../utils/index";
-import {
-  DeletedObject,
-  ExercisePatch,
-  TrainingExercise,
-} from "./trainingApi.types";
+import { DeletedObject } from "./api.types";
+import { ExercisePatch, TrainingExercise } from "./trainingApi.types";
 
 export function postExercise(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   catalogExerciseId: string,
   planId: string,
   unitId: string
@@ -15,7 +12,7 @@ export function postExercise(
   const params = { catalogExerciseId };
   return request(
     client.post(
-      `/training-plans/${planId}/units/${unitId}/exercises`,
+      `/v1/training-plans/${planId}/units/${unitId}/exercises`,
       {},
       { params }
     )
@@ -23,7 +20,7 @@ export function postExercise(
 }
 
 export function patchExercise(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string,
   exerciseId: string,
   patch: ExercisePatch,
@@ -33,28 +30,32 @@ export function patchExercise(
     catalogExerciseId,
   };
   return request(
-    client.patch(`/training-plans/${planId}/exercises/${exerciseId}`, patch, {
-      params,
-    })
+    client.patch(
+      `/v1/training-plans/${planId}/exercises/${exerciseId}`,
+      patch,
+      {
+        params,
+      }
+    )
   );
 }
 
 export function deleteExercise(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string,
   exerciseId: string
 ): Promise<DeletedObject> {
   return request(
-    client.delete(`/training-plans/${planId}/exercises/${exerciseId}`)
+    client.delete(`/v1/training-plans/${planId}/exercises/${exerciseId}`)
   );
 }
 
 export function getExercises(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   planId: string,
   unitId: string
 ): Promise<TrainingExercise[]> {
   return request(
-    client.get(`/training-plans/${planId}/units/${unitId}/exercises`)
+    client.get(`/v1/training-plans/${planId}/units/${unitId}/exercises`)
   );
 }
