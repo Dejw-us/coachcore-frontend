@@ -15,7 +15,7 @@ export default function PlanGoals({ goals }: PlanGoalsProps) {
       <Mapper
         value={goals}
         render={(goal) => (
-          <View className="flex flex-row">
+          <View key={goal.id} className="flex flex-row">
             <Entypo name="dot-single" className="self-center" size={15} />
             <Text key={goal.id}>{goal.description}</Text>
           </View>

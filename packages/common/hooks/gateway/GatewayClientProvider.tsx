@@ -1,13 +1,11 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { jwtDecode } from "jwt-decode";
-import React, { useEffect, useState } from "react";
-import {
-  GatewayClientProviderProps,
-  Tokens,
-  TokenStorage,
-  User,
-} from "./GatewayClient.types";
+import axios from "axios";
+import React, { useRef, useState } from "react";
+import { GatewayClientProviderProps, User } from "./GatewayClient.types";
 import { GatewayClientContext } from "./GatewayClientContext";
+import { useFetchTokens } from "./useFetchTokens";
+import { useRestoreTokens } from "./useRestoreTokens";
+import { useTokensSetters } from "./useTokensSetters";
+import { useUpdateGatewayClient } from "./useUpdateGatewayClient";
 
 const GatewayClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_GATEWAY_URL,
@@ -16,144 +14,42 @@ const GatewayClient = axios.create({
   },
 });
 
-async function fetchTokens(
-  tokenUrl: string,
-  tokenStorage: TokenStorage,
-  clientId: string,
-  clientSecret: string
-): Promise<Tokens | null> {
-  console.log("fetching tokens");
-  const refreshToken = await tokenStorage.restoreRefreshToken();
-  const body = {
-    grant_type: "refresh_token",
-    refresh_token: refreshToken,
-  };
-  const clientCredentials = btoa(`${clientId}:${clientSecret}`);
-
-  const config: AxiosRequestConfig = {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Basic ${clientCredentials}`,
-    },
-  };
-  const response = await axios.post(tokenUrl, body, config);
-  if (response.status === 200) {
-    return response.data;
-  }
-
-  return null;
-}
-
 export function GatewayClientProvider({
   children,
   tokenStorage,
   urls,
   oauth2Client,
 }: GatewayClientProviderProps) {
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [idToken, setIdToken] = useState<string | null>(null);
+  const refreshTokenRef = useRef<string | null>(null);
+  const accessTokenRef = useRef<string | null>(null);
+  const idTokenRef = useRef<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const fetchTokens = useFetchTokens(urls.token, refreshTokenRef, oauth2Client);
+  const { setIdToken, setRefreshToken, setAccessToken } = useTokensSetters(
+    tokenStorage,
+    setUser,
+    idTokenRef,
+    refreshTokenRef,
+    accessTokenRef
+  );
 
-  useEffect(() => {
-    const restore = async () => {
-      console.log("Restoring tokens...");
-      const newRefreshToken = await tokenStorage.restoreRefreshToken();
-      const newIdToken = await tokenStorage.restoreIdToken();
-
-      console.log("Refresh token: " + newRefreshToken);
-      console.log("Id token: " + newIdToken);
-
-      setRefreshToken(newRefreshToken);
-      setIdToken(newIdToken);
-    };
-    restore();
-  }, [tokenStorage]);
-
-  useEffect(() => {
-    if (refreshToken) {
-      console.log("Refresh persist");
-      tokenStorage.persistRefreshToken(refreshToken);
-    }
-  }, [refreshToken]);
-
-  useEffect(() => {
-    if (idToken) {
-      console.log("Id persist");
-      tokenStorage.persistIdToken(idToken);
-    }
-  }, [idToken]);
-
-  useEffect(() => {
-    if (!refreshToken) {
-      return;
-    }
-
-    const requestInterceptor = GatewayClient.interceptors.request.use(
-      (request) => {
-        if (accessToken != null) {
-          request.headers.Authorization = `Bearer ${accessToken}`;
-        }
-        return request;
-      }
-    );
-
-    const responseInerceptor = GatewayClient.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        if (!error.response) {
-          return Promise.reject(error);
-        }
-
-        const status = error.response.status;
-        if ((status === 401 || status === 403) && refreshToken != null) {
-          const tokens = await fetchTokens(
-            urls.token,
-            tokenStorage,
-            oauth2Client.id,
-            oauth2Client.secret
-          );
-
-          if (tokens) {
-            const newIdToken = tokens.id_token;
-            const newAccessToken = tokens.access_token;
-
-            setAccessToken(newAccessToken);
-            setIdToken(newIdToken);
-
-            tokenStorage.persistRefreshToken(tokens.refresh_token);
-            tokenStorage.persistIdToken(newIdToken);
-            return axios(error.config);
-          }
-        }
-      }
-    );
-
-    return () => {
-      GatewayClient.interceptors.request.eject(requestInterceptor);
-      GatewayClient.interceptors.request.eject(responseInerceptor);
-    };
-  }, [accessToken, refreshToken]);
-
-  useEffect(() => {
-    if (idToken != null) {
-      const jwt = jwtDecode(idToken);
-      const user: User = {
-        username: jwt.sub!,
-      };
-      setUser(user);
-    } else {
-      setUser(null);
-    }
-  }, [idToken]);
+  useRestoreTokens(tokenStorage, setRefreshToken, setIdToken);
+  useUpdateGatewayClient(
+    GatewayClient,
+    refreshTokenRef,
+    accessTokenRef,
+    idTokenRef,
+    tokenStorage,
+    fetchTokens
+  );
 
   return (
     <GatewayClientContext.Provider
       value={{
         client: GatewayClient,
-        refreshToken,
-        accessToken,
-        idToken,
+        refreshToken: refreshTokenRef.current,
+        accessToken: accessTokenRef.current,
+        idToken: idTokenRef.current,
         user,
         setAccessToken,
         setIdToken,
