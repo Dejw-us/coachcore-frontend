@@ -29,6 +29,11 @@ export type TrainingExercise = {
   index: number;
 };
 
+export type PlanPatch = {
+  name?: string;
+  description?: string;
+};
+
 export type ExercisePatch = {
   catalogExerciseId?: string;
   notes?: string;

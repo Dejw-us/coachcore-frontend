@@ -14,6 +14,26 @@ const GatewayClient = axios.create({
   },
 });
 
+/**
+ * GatewayClientProvider is a context provider that sets up and manages
+ * OAuth2 token-based authentication flow with automatic token restoration,
+ * refreshing, and Axios request/response handling.
+ *
+ * It provides access to:
+ * - `GatewayClient` — a preconfigured Axios instance with auth headers
+ * - current tokens: `accessToken`, `refreshToken`, `idToken`
+ * - decoded user information
+ * - functions to manually update tokens
+ *
+ * This component should wrap your application to provide authentication context.
+ *
+ * ### Responsibilities:
+ * - Restore tokens from secure storage on mount
+ * - Attach tokens to Axios requests
+ * - Automatically refresh tokens on 401/403 responses
+ * - Decode and store user info from `idToken`
+ * - Persist token changes via `tokenStorage`
+ */
 export function GatewayClientProvider({
   children,
   tokenStorage,

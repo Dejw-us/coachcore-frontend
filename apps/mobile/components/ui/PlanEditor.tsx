@@ -14,7 +14,7 @@ export type PlanEdtiorProps = {
 
 export default function PlanEditor({ plan }: PlanEdtiorProps) {
   const { data, isLoading } = useUnits(plan.id);
-
+  const { mutate: updatePlan } = useUpda;
   return (
     <LoadingView
       isLoading={isLoading}
