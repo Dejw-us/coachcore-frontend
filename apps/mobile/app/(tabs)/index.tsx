@@ -1,4 +1,4 @@
-import MiddleSafeAreaView from "@/components/MiddleSafeAreaView";
+import MiddleSafeAreaView from "@/components/common/MiddleSafeAreaView";
 import UserPanel from "@/components/ui/UserPanel";
 import { useOAuth2Client } from "@/hooks/useOAuth2Client";
 import { useGatewayClient, usePlans } from "common";

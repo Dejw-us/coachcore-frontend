@@ -1,4 +1,4 @@
-import LoggedInView from "@/components/LoggedInView";
+import LoggedInView from "@/components/common/LoggedInView";
 import MyPlan from "@/components/ui/MyPlan";
 import { useUserPlans } from "common";
 import Mapper from "common/components/Mapper";

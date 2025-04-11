@@ -2,7 +2,7 @@ import { Entypo } from "@expo/vector-icons";
 import { TrainingGoal } from "common";
 import Mapper from "common/components/Mapper";
 import { Text, View } from "react-native";
-import Header from "../Header";
+import Header from "../common/Header";
 
 export type PlanGoalsProps = {
   goals: TrainingGoal[];

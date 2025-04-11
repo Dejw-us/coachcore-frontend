@@ -1,10 +1,10 @@
-import LoadingView from "@/components/LoadingView";
+import LoadingView from "@/components/common/LoadingView";
 import PlanEditor from "@/components/ui/PlanEditor";
 import { useViewPlanParams } from "@/hooks/useViewPlanParams";
 import { usePlan } from "common";
 import { Stack } from "expo-router";
 
-export default function PlanEditScreen() {
+export default function PlanEditLayout() {
   const params = useViewPlanParams();
   const { data, isLoading } = usePlan(params.planId);
 

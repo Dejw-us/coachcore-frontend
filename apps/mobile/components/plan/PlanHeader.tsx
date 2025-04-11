@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Header from "../Header";
+import Header from "../common/Header";
 
 export type PlanHeaderProps = {
   name: string;
