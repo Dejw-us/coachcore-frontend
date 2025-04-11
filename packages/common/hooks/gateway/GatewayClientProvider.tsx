@@ -10,7 +10,7 @@ import {
 import { GatewayClientContext } from "./GatewayClientContext";
 
 const GatewayClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_GATEWAY_URL!,
+  baseURL: process.env.EXPO_PUBLIC_GATEWAY_URL,
   headers: {
     "Content-Type": "application/json",
   },
