@@ -1,8 +1,8 @@
 import { usePlan, useUnits } from "common";
 import Mapper from "common/components/Mapper";
 import { ActivityIndicator, ScrollView, Text } from "react-native";
-import CenterView from "../CenterView";
-import MiddleSafeAreaView from "../MiddleSafeAreaView";
+import CenterView from "../common/CenterView";
+import MiddleSafeAreaView from "../common/MiddleSafeAreaView";
 import PlanDescription from "../plan/PlanDescription";
 import PlanGoals from "../plan/PlanGoals";
 import PlanHeader from "../plan/PlanHeader";

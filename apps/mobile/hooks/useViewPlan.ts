@@ -17,9 +17,7 @@ export function useViewPlan(
   edit = false
 ): ViewPlan {
   const router = useRouter();
-  const pathname = edit
-    ? "/screens/PlanEditScreen"
-    : "/screens/PlanPreviewScreen";
+  const pathname = edit ? "/plan/edit" : "/plan/preview";
 
   return {
     viewPlan: () => {

@@ -1,8 +1,8 @@
 import { AntDesign } from "@expo/vector-icons";
 import { TrainingUnit } from "common";
 import { Text, View } from "react-native";
-import CenterView from "../CenterView";
-import Separator from "../Separator";
+import CenterView from "../common/CenterView";
+import Separator from "../common/Separator";
 
 export type UnitViewProps = {
   unit: TrainingUnit;

@@ -1,7 +1,7 @@
 import { tokenStorage } from "@/app/_layout";
 import { useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosRequestConfig } from "axios";
-import { useGatewayClient } from "common";
+import { LOG, useGatewayClient } from "common";
 import * as AuthSession from "expo-auth-session";
 import { openBrowserAsync } from "expo-web-browser";
 import { useEffect } from "react";
@@ -19,6 +19,38 @@ export type OAuth2ClientState = {
   logout: () => void;
 };
 
+/**
+ * Custom hook for managing OAuth2 authentication flow, including login, logout,
+ * and token handling. It uses the `expo-auth-session` library to handle the OAuth2
+ * flow and stores the resulting tokens in a global context for access throughout
+ * the application.
+ *
+ * ### Responsibilities:
+ * - Perform OAuth2 login using the authorization code grant flow.
+ * - Fetch access, refresh, and ID tokens from the authorization server.
+ * - Handle user logout and clear tokens from the client and storage.
+ * - Invalidate and reset the react-query cache upon login and logout.
+ *
+ * It provides the following functionality:
+ * - `login` - Initiates the OAuth2 login flow, redirects to the authorization server.
+ * - `logout` - Clears user tokens and session, invalidates react-query cache,
+ *   and logs the user out of the authorization server.
+ *
+ * **Usage:**
+ * This hook should be used in a component where you need to trigger the login or
+ * logout actions. This hook must be wrapped with `GatewayClientProvider`
+ *
+ * @returns {OAuth2ClientState} - The OAuth2 client state, including `login` and `logout` functions.
+ *
+ * @example
+ * const { login, logout } = useOAuth2Client();
+ *
+ * // To initiate login:
+ * await login();
+ *
+ * // To logout:
+ * await logout();
+ */
 export function useOAuth2Client(): OAuth2ClientState {
   const { setAccessToken, setRefreshToken, setIdToken } = useGatewayClient();
   const client = useQueryClient();
@@ -60,14 +92,13 @@ export function useOAuth2Client(): OAuth2ClientState {
       setAccessToken(data.access_token);
       setRefreshToken(data.refresh_token);
       setIdToken(data.id_token);
-
-      console.log("data: " + JSON.stringify(data));
     };
     fetchToken();
   }, [result]);
 
   return {
     login: async () => {
+      LOG.debug("Logging in");
       client.invalidateQueries();
       client.removeQueries();
       client.resetQueries();
@@ -76,19 +107,20 @@ export function useOAuth2Client(): OAuth2ClientState {
       await promptAsync();
     },
     logout: async () => {
-      console.log("Clearing tokens");
+      LOG.debug("Logging out");
       await tokenStorage.clearRefreshToken();
       await tokenStorage.clearIdToken();
-      console.log("Cleared tokens");
+
       setAccessToken(null);
       setRefreshToken(null);
       setIdToken(null);
-      await openBrowserAsync(LOGOUT_URL);
-      console.log("Invlaidating queries");
+
       client.invalidateQueries();
       client.removeQueries();
       client.resetQueries();
       client.clear();
+
+      await openBrowserAsync(LOGOUT_URL);
     },
   };
 }

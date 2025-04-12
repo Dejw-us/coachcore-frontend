@@ -7,7 +7,9 @@ import {
   usePublicUser,
 } from "common";
 import { View } from "react-native";
-import CenterView from "../CenterView";
+import CenterView from "../common/CenterView";
+import Separator from "../common/Separator";
+import Tags from "../common/Tags";
 import PlanDescription from "../plan/PlanDescription";
 import PlanDetails from "../plan/PlanDetails";
 import PlanGoals from "../plan/PlanGoals";
@@ -16,8 +18,6 @@ import PlanOwner from "../plan/PlanOwner";
 import PlanPricing from "../plan/PlanPricing";
 import { PlanSaveButton } from "../plan/PlanSaveButton";
 import PlanStats from "../plan/PlanStats";
-import Separator from "../Separator";
-import Tags from "../Tags";
 
 export type TrainingPlanViewProps = {
   plan: TrainingPlan;

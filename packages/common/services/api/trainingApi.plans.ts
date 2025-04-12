@@ -5,17 +5,26 @@ import { DeletedObject, Message } from "./api.types";
 import {
   CreateTrainingPlan,
   ExerciseCategory,
+  PlanPatch,
   SavedPlan,
   TrainingPlan,
   TrainingPlanRating,
   TrainingPlanTr,
 } from "./trainingApi.types";
 
+export function patchPlan(
+  { client }: GatewayClientState,
+  planId: string,
+  patch: PlanPatch
+): Promise<TrainingPlan> {
+  return request(client.patch(`/v1/training-plans/${planId}`, patch));
+}
+
 export function deletePlan(
   { client }: GatewayClientState,
   planId: string
 ): Promise<DeletedObject> {
-  return request(client.delete(`/training-plans/${planId}`));
+  return request(client.delete(`/v1/training-plans/${planId}`));
 }
 
 export function deleteSavedPlan(
@@ -93,12 +102,12 @@ export function getPlan(
   { client }: GatewayClientState,
   id: string
 ): Promise<TrainingPlan> {
-  return request(client.get(`v1/public/training-plans/${id}`));
+  return request(client.get(`/v1/public/training-plans/${id}`));
 }
 
 export function postPlan(
   { client }: GatewayClientState,
   plan: CreateTrainingPlan
 ): Promise<TrainingPlan> {
-  return request(client.post("v1/training-plans", plan));
+  return request(client.post("/v1/training-plans", plan));
 }

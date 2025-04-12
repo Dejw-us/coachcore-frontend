@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { ReactNode } from "react";
 
 export type User = {
   username: string;
@@ -8,11 +8,11 @@ export type User = {
 export type GatewayClientState = {
   client: AxiosInstance;
   refreshToken: string | null;
-  setRefreshToken: Dispatch<SetStateAction<string | null>>;
+  setRefreshToken: (token: string | null) => void;
   accessToken: string | null;
-  setAccessToken: Dispatch<SetStateAction<string | null>>;
+  setAccessToken: (token: string | null) => void;
   idToken: string | null;
-  setIdToken: Dispatch<SetStateAction<string | null>>;
+  setIdToken: (token: string | null) => void;
   user: User | null;
 };
 
@@ -46,4 +46,14 @@ export type Tokens = {
   refresh_token: string;
   access_token: string;
   id_token: string;
+};
+
+export type JwtPayload = {
+  sub: string;
+};
+
+export type TokensSetters = {
+  setIdToken: (token: string | null) => void;
+  setRefreshToken: (token: string | null) => void;
+  setAccessToken: (token: string | null) => void;
 };

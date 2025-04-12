@@ -1,7 +1,7 @@
 import { useViewPlan } from "@/hooks/useViewPlan";
 import { TrainingPlan } from "common";
 import { Text, View } from "react-native";
-import CenterView from "../CenterView";
+import CenterView from "../common/CenterView";
 
 export type MyPlanProps = {
   plan: TrainingPlan;

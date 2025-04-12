@@ -1,9 +1,9 @@
 import { TrainingPlan, useUnits } from "common";
 import Mapper from "common/components/Mapper";
 import { Text, TextInput, View } from "react-native";
-import CenterView from "../CenterView";
-import LoadingView from "../LoadingView";
-import Separator from "../Separator";
+import CenterView from "../common/CenterView";
+import LoadingView from "../common/LoadingView";
+import Separator from "../common/Separator";
 import PlanWeeks from "../plan/PlanWeeks";
 import AddUnitButton from "../unit/AddUnitButton";
 import UnitView from "../unit/UnitView";

@@ -1,9 +1,9 @@
-import { GatewayClient } from "../../hooks";
+import { GatewayClientState } from "../../hooks/gateway/GatewayClient.types";
 import { request } from "../../utils";
 import { PublicUser } from "./userApi.types";
 
 export function getPublicUser(
-  { client }: GatewayClient,
+  { client }: GatewayClientState,
   username: string
 ): Promise<PublicUser> {
   return request(client.get(`/v1/users/public/${username}`));

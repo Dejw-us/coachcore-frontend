@@ -4,7 +4,7 @@ import "react-native-reanimated";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { GatewayClientProvider, ID_TOKEN, REFRESH_TOKEN } from "common";
+import { GatewayClientProvider, ID_TOKEN, LOG, REFRESH_TOKEN } from "common";
 import {
   OAuth2ClientCredentials,
   TokenStorage,
@@ -50,6 +50,8 @@ const urls: Urls = {
 };
 
 export default function RootLayout() {
+  LOG.setLevel("debug");
+
   return (
     <QueryClientProvider client={new QueryClient()}>
       <GatewayClientProvider

@@ -2,7 +2,7 @@ import PlanPreview from "@/components/ui/PlanPreview";
 import { useViewPlanParams } from "@/hooks/useViewPlanParams";
 import { Stack } from "expo-router";
 
-export default function PlanPreviewScreen() {
+export default function PlanPreviewLayout() {
   const params = useViewPlanParams();
 
   return (
