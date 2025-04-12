@@ -57,3 +57,4 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+// dawidek jest fajny wojtuś
