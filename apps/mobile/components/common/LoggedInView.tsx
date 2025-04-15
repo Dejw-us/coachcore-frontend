@@ -8,6 +8,11 @@ export type LoggedInViewProps = {
   children: ReactNode;
 };
 
+/**
+ * @author Dawid Ratajczak
+ *
+ * This component ensures that user is logged in
+ */
 export default function LoggedInView({ children }: LoggedInViewProps) {
   const { user } = useGatewayClient();
   const { login } = useOAuth2Client();
