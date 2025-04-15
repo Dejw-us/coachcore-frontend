@@ -21,7 +21,6 @@ export default function PlanOwner({
           source={{ uri: PROFILE_URI + userId }}
         />
         <Text className="ml-2.5 flex-1 self-center">{username}</Text>
-        <Text className="self-center">Follow</Text>
       </View>
       <Text>{description}</Text>
     </View>

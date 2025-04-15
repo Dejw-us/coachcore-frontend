@@ -10,4 +10,6 @@ export * from "./useSavedPlans";
 export * from "./useSavePlan";
 export * from "./useUpdatePlan";
 export * from "./useUpdatePlanRating";
+export * from "./useUsedPlans";
+export * from "./useUsePlan";
 export * from "./useUserPlans";

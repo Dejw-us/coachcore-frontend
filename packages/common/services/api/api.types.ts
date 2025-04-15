@@ -5,3 +5,8 @@ export type DeletedObject = {
 export type Message = {
   message: string;
 };
+
+export type Page = {
+  size: number;
+  page: number;
+};

@@ -45,7 +45,12 @@ export function TrainingPlanView({ plan }: TrainingPlanViewProps) {
       <Separator className="bg-slate-300 mt-5 mb-5 h-1" />
       <View className="flex flex-row justify-between mb-6 mt-2">
         <PlanSaveButton planId={plan.id} />
-        <PlanPricing currency="PLN" price={0} view={viewPlan} />
+        <PlanPricing
+          currency="PLN"
+          price={0}
+          view={viewPlan}
+          planId={plan.id}
+        />
       </View>
       <PlanOwner
         username={planOwner?.username || "Failed to load username"}

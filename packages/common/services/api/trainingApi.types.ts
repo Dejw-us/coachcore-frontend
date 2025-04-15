@@ -97,6 +97,11 @@ export type CreateTrainingUnit = {
   name: string;
 };
 
+export type UsedPlan = {
+  userId: string;
+  usedPlan: TrainingPlan;
+};
+
 export type SavedPlan = {
   userId: string;
   savedPlan: TrainingPlan;

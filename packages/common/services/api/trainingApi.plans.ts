@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from "axios";
 import { GatewayClientState } from "../../hooks/gateway/GatewayClient.types";
 import { request } from "../../utils/index";
-import { DeletedObject, Message } from "./api.types";
+import { DeletedObject, Message, Page } from "./api.types";
 import {
   CreateTrainingPlan,
   ExerciseCategory,
@@ -10,6 +10,7 @@ import {
   TrainingPlan,
   TrainingPlanRating,
   TrainingPlanTr,
+  UsedPlan,
 } from "./trainingApi.types";
 
 export function patchPlan(
@@ -51,6 +52,20 @@ export function getPlans({
   return request(client.get("/v1/public/training-plans"));
 }
 
+export function getUsedPlans(
+  { client }: GatewayClientState,
+  page: Page
+): Promise<TrainingPlan[]> {
+  return request(client.get("/v1/used-plans", { params: page }));
+}
+
+export function postUsedPlans(
+  { client }: GatewayClientState,
+  planId: string
+): Promise<UsedPlan> {
+  return request(client.post("/v1/used-plans", {}, { params: { planId } }));
+}
+
 export function getPlanRating(
   { client }: GatewayClientState,
   planId: string
@@ -61,7 +76,11 @@ export function getPlanRating(
 export function getUserPlans({
   client,
 }: GatewayClientState): Promise<TrainingPlan[]> {
-  return request(client.get("v1/training-plans/me"));
+  return request(
+    client.get("v1/training-plans/me", {
+      params: { me: true, used: true, saved: true },
+    })
+  );
 }
 
 export function getPlanTr(

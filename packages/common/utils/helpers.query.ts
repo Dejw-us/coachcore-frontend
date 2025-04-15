@@ -22,6 +22,7 @@ export const publicUserKey = (username: string) => ["publicUser", username];
 export const planRatingKey = (planId: string) => ["planRating", planId];
 export const planTrKey = (planId: string) => ["planTr", planId];
 export const planCategoryKey = (planId: string) => ["planCategory", planId];
+export const usedPlansKey = () => ["addUsedPlans"];
 
 export function filterAndAddQueryData<T>(
   client: QueryClient,
